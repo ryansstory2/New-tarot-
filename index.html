@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mystic Tarot</title>
+    <title>Surreal Mystic Tarot</title>
     <style>
         body {
             background-color: #0f0c1b;
@@ -17,6 +17,7 @@
             color: #f3e5ab; 
             margin-bottom: 5px; 
             font-size: 1.8rem;
+            letter-spacing: 1px;
         }
         p.subtitle { 
             color: #b1a7d8; 
@@ -35,6 +36,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             width: 100%;
             max-width: 300px;
+            transition: transform 0.2s;
         }
         button:active { 
             transform: scale(0.97); 
@@ -42,7 +44,7 @@
         .spread {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             margin-top: 25px;
             max-width: 400px;
             margin-left: auto;
@@ -53,58 +55,113 @@
             border: 1px solid #4a3b75;
             border-radius: 12px;
             padding: 16px;
-            text-align: left;
+            text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
+        .card img {
+            width: 160px;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.4s ease;
+            border: 1px solid #f3e5ab33;
+        }
+        .card img.reversed {
+            transform: rotate(180deg);
+        }
         .card h3 { 
-            margin: 0 0 5px 0; 
+            margin: 5px 0 2px 0; 
             color: #f3e5ab; 
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
         .card .pos { 
             font-size: 0.75rem; 
             color: #b1a7d8; 
             text-transform: uppercase; 
             letter-spacing: 1.5px; 
-            margin-bottom: 6px; 
             font-weight: bold;
         }
         .card .orient { 
             font-weight: normal; 
             color: #ffb74d; 
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
         }
         .card p { 
             margin: 8px 0 0 0; 
             font-size: 0.95rem; 
             line-height: 1.4; 
             color: #d1c7f3;
+            text-align: left;
+            border-top: 1px solid #2e244a;
+            padding-top: 8px;
         }
     </style>
 </head>
 <body>
 
-    <h1>🔮 Mystic Tarot</h1>
-    <p class="subtitle">Tap below to reveal your daily guidance</p>
+    <h1>👁️ Surreal Mystic Tarot</h1>
+    <p class="subtitle">Step into the dreamscape — reveal your Past, Present, and Future</p>
     
-    <button onclick="drawTarot()">Draw Cards</button>
+    <button onclick="drawTarot()">Draw 3-Card Spread</button>
 
     <div id="results" class="spread"></div>
 
     <script>
         const deck = [
-            { name: "The Fool", upright: "New beginnings, innocence, spontaneity, a free spirit.", reversed: "Holding back, recklessness, risk-taking, foolishness." },
-            { name: "The Magician", upright: "Manifestation, resourcefulness, power, inspired action.", reversed: "Manipulation, poor planning, untapped talents." },
-            { name: "The High Priestess", upright: "Intuition, sacred knowledge, divine feminine, subconscious.", reversed: "Secrets, disconnected intuition, superficiality." },
-            { name: "The Empress", upright: "Femininity, beauty, nature, nurturing, abundance.", reversed: "Creative block, dependence on others, emptiness." },
-            { name: "The Emperor", upright: "Authority, establishment, structure, a father figure.", reversed: "Domination, excessive control, lack of discipline." },
-            { name: "Ace of Wands", upright: "Inspiration, power, creation, new passion, growth.", reversed: "Delays, lack of motivation, creative blocks." },
-            { name: "Ace of Cups", upright: "Love, compassion, creativity, overwhelming emotion.", reversed: "Self-love block, emotional vulnerability, sadness." },
-            { name: "Ace of Swords", upright: "Breakthrough, clarity, sharp mind, new ideas.", reversed: "Confusion, hostility, miscommunication." },
-            { name: "Ace of Pentacles", upright: "New financial opportunity, manifestation, abundance.", reversed: "Lost opportunity, bad investment, financial slack." }
+            { 
+                name: "0. The Fool", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+                upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", 
+                reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." 
+            },
+            { 
+                name: "I. The Magician", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+                upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", 
+                reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." 
+            },
+            { 
+                name: "II. The High Priestess", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+                upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", 
+                reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." 
+            },
+            { 
+                name: "III. The Empress", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+                upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", 
+                reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." 
+            },
+            { 
+                name: "IV. The Emperor", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+                upright: "Authority, structure, stability, leadership, establishing solid foundations.", 
+                reversed: "Tyranny, excessive control, rigidity, lack of discipline." 
+            },
+            { 
+                name: "V. The Hierophant", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
+                upright: "Spiritual wisdom, traditions, institutions, guidance, shared beliefs.", 
+                reversed: "Rebellion, breaking traditions, restriction, unorthodox methods." 
+            },
+            { 
+                name: "VI. The Lovers", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
+                upright: "Divine union, choices aligned with core values, harmony, vulnerability.", 
+                reversed: "Disharmony, misalignment, bad choices, internal conflict." 
+            },
+            { 
+                name: "VII. The Chariot", 
+                image: "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+                upright: "Control, willpower, success through focused determination, overcoming obstacles.", 
+                reversed: "Lack of direction, loss of control, aggression, scattered energy." 
+            }
         ];
 
         function drawTarot() {
+            // Shuffle deck randomly
             const shuffled = [...deck].sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, 3);
             const positions = ["Past", "Present", "Future"];
@@ -116,19 +173,22 @@
                 const isReversed = Math.random() < 0.5;
                 const meaning = isReversed ? card.reversed : card.upright;
                 const orientation = isReversed ? "Reversed 🔄" : "Upright ✨";
+                const imgClass = isReversed ? "reversed" : "";
 
                 const cardDiv = document.createElement("div");
                 cardDiv.className = "card";
                 cardDiv.innerHTML = `
                     <div class="pos">${positions[index]}</div>
-                    <h3>${card.name} <span class="orient">(${orientation})</span></h3>
+                    <h3>${card.name}</h3>
+                    <div class="orient">${orientation}</div>
+                    <img src="${card.image}" alt="${card.name}" class="${imgClass}">
                     <p>${meaning}</p>
                 `;
                 container.appendChild(cardDiv);
             });
         }
 
-        // Draw cards automatically when loaded
+        // Draw initial spread automatically on load
         window.onload = drawTarot;
     </script>
 </body>
