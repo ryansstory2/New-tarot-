@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystic Tarot</title>
+    <style>
+        body {
+            background-color: #0f0c1b;
+            color: #e0d9f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { 
+            color: #f3e5ab; 
+            margin-bottom: 5px; 
+            font-size: 1.8rem;
+        }
+        p.subtitle { 
+            color: #b1a7d8; 
+            font-size: 0.9rem; 
+            margin-bottom: 25px; 
+        }
+        button {
+            background: linear-gradient(135deg, #4a154b, #2b0b30);
+            color: #f3e5ab;
+            border: 2px solid #f3e5ab;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 300px;
+        }
+        button:active { 
+            transform: scale(0.97); 
+        }
+        .spread {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card {
+            background: #1a1528;
+            border: 1px solid #4a3b75;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .card h3 { 
+            margin: 0 0 5px 0; 
+            color: #f3e5ab; 
+            font-size: 1.1rem;
+        }
+        .card .pos { 
+            font-size: 0.75rem; 
+            color: #b1a7d8; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            margin-bottom: 6px; 
+            font-weight: bold;
+        }
+        .card .orient { 
+            font-weight: normal; 
+            color: #ffb74d; 
+            font-size: 0.9rem;
+        }
+        .card p { 
+            margin: 8px 0 0 0; 
+            font-size: 0.95rem; 
+            line-height: 1.4; 
+            color: #d1c7f3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🔮 Mystic Tarot</h1>
+    <p class="subtitle">Tap below to reveal your daily guidance</p>
+    
+    <button onclick="drawTarot()">Draw Cards</button>
+
+    <div id="results" class="spread"></div>
+
+    <script>
+        const deck = [
+            { name: "The Fool", upright: "New beginnings, innocence, spontaneity, a free spirit.", reversed: "Holding back, recklessness, risk-taking, foolishness." },
+            { name: "The Magician", upright: "Manifestation, resourcefulness, power, inspired action.", reversed: "Manipulation, poor planning, untapped talents." },
+            { name: "The High Priestess", upright: "Intuition, sacred knowledge, divine feminine, subconscious.", reversed: "Secrets, disconnected intuition, superficiality." },
+            { name: "The Empress", upright: "Femininity, beauty, nature, nurturing, abundance.", reversed: "Creative block, dependence on others, emptiness." },
+            { name: "The Emperor", upright: "Authority, establishment, structure, a father figure.", reversed: "Domination, excessive control, lack of discipline." },
+            { name: "Ace of Wands", upright: "Inspiration, power, creation, new passion, growth.", reversed: "Delays, lack of motivation, creative blocks." },
+            { name: "Ace of Cups", upright: "Love, compassion, creativity, overwhelming emotion.", reversed: "Self-love block, emotional vulnerability, sadness." },
+            { name: "Ace of Swords", upright: "Breakthrough, clarity, sharp mind, new ideas.", reversed: "Confusion, hostility, miscommunication." },
+            { name: "Ace of Pentacles", upright: "New financial opportunity, manifestation, abundance.", reversed: "Lost opportunity, bad investment, financial slack." }
+        ];
+
+        function drawTarot() {
+            const shuffled = [...deck].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 3);
+            const positions = ["Past", "Present", "Future"];
+            
+            const container = document.getElementById("results");
+            container.innerHTML = "";
+
+            selected.forEach((card, index) => {
+                const isReversed = Math.random() < 0.5;
+                const meaning = isReversed ? card.reversed : card.upright;
+                const orientation = isReversed ? "Reversed 🔄" : "Upright ✨";
+
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "card";
+                cardDiv.innerHTML = `
+                    <div class="pos">${positions[index]}</div>
+                    <h3>${card.name} <span class="orient">(${orientation})</span></h3>
+                    <p>${meaning}</p>
+                `;
+                container.appendChild(cardDiv);
+            });
+        }
+
+        // Draw cards automatically when loaded
+        window.onload = drawTarot;
+    </script>
+</body>
+</html>
