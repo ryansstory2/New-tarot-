@@ -25,9 +25,9 @@
         }
         h1 {
             color: var(--accent-gold);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             letter-spacing: 1px;
         }
         .container {
@@ -43,7 +43,7 @@
             background: linear-gradient(135deg, #4a235a, #2c1638);
             color: var(--accent-gold);
             border: 1px solid var(--border-purple);
-            padding: 15px;
+            padding: 14px;
             font-size: 1rem;
             font-weight: bold;
             border-radius: 8px;
@@ -59,7 +59,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .action-btn {
             background: #311b4a;
@@ -69,10 +69,11 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 0.9rem;
         }
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -80,7 +81,7 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-purple);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -89,64 +90,64 @@
         }
         .card-position {
             color: var(--accent-gold);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .card-visual {
-            width: 130px;
-            height: 180px;
+        .card-img-container {
+            width: 140px;
+            height: 200px;
+            position: relative;
             border-radius: 6px;
+            overflow: hidden;
             border: 1px solid var(--accent-gold);
             background: linear-gradient(145deg, #1f1432, #100b1d);
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 10px;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
+            justify-content: center;
         }
-        .card-visual img {
+        .card-img-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             position: absolute;
             top: 0;
             left: 0;
-            border-radius: 5px;
+            z-index: 2;
         }
-        .card-symbol {
-            font-size: 1.8rem;
+        .fallback-art {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             color: var(--accent-gold);
-            z-index: 1;
-            margin-bottom: 5px;
-        }
-        .card-title-fallback {
-            font-size: 0.75rem;
-            color: var(--text-purple);
-            font-weight: bold;
-            z-index: 1;
+            padding: 10px;
+            box-sizing: border-box;
             text-align: center;
+            z-index: 1;
         }
         .card-info {
-            margin-top: 10px;
+            margin-top: 8px;
             font-size: 0.85rem;
             width: 100%;
         }
         .card-name {
             font-weight: bold;
             color: #fff;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .card-keywords {
             font-style: italic;
             color: var(--sub-purple);
-            font-size: 0.8rem;
-            margin-top: 3px;
+            font-size: 0.75rem;
+            margin-top: 2px;
         }
         .summary-box {
             background-color: var(--card-bg);
@@ -159,7 +160,7 @@
         .summary-box h3 {
             color: var(--accent-gold);
             margin-top: 0;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
         }
         .hidden {
             display: none !important;
@@ -185,8 +186,118 @@
     <div id="reading-view" class="hidden">
         <div class="top-bar">
             <button class="action-btn" onclick="showMenu()">← MENU</button>
-            <span id="reading-title" style="font-weight: bold; color: var(--accent-gold);"></span>
+            <span id="reading-title" style="font-weight: bold; color: var(--accent-gold); font-size: 0.95rem;"></span>
             <button class="action-btn" onclick="generateReading()">🔄 REDRAW</button>
         </div>
 
-        <div id="
+        <div id="cards-container" class="cards-grid"></div>
+
+        <div class="summary-box">
+            <h3>Reading Summary & Synthesis</h3>
+            <div id="summary-content" style="font-size: 0.85rem; line-height: 1.4;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const TAROT_CARDS = [
+    {filename: "1792803065598.jpg", name: "XVII: The Star", keywords: "Hope, Faith, Renewal", desc: "A bright guiding light offering peace, inspiration, and cosmic direction."},
+    {filename: "1792803189707.jpg", name: "XVIII: The Moon", keywords: "Illusion, Intuition, Fears", desc: "Navigating uncertainties and subconscious shadows under the pale night."},
+    {filename: "1792803197256.jpg", name: "0: The Fool", keywords: "Beginnings, Spontaneity, Leap of Faith", desc: "Taking a surreal leap into the unknown, trusting the unfolding journey."},
+    {filename: "1792803202564.jpg", name: "I: The Magician", keywords: "Manifestation, Power, Skill", desc: "Transforming vision into reality using pure willpower and focused intention."},
+    {filename: "1792803209642.jpg", name: "II: The High Priestess", keywords: "Intuition, Mysteries, Subconscious", desc: "Accessing deep inner wisdom and quiet knowledge hidden behind the veil."},
+    {filename: "1792803221675.jpg", name: "III: The Empress", keywords: "Abundance, Nurturing, Creation", desc: "Lush growth, creative fertility, and grounding organic harmony."},
+    {filename: "1792803229181.jpg", name: "IV: The Emperor", keywords: "Structure, Authority, Control", desc: "Establishing order, solid foundations, and strategic leadership amidst chaos."},
+    {filename: "1792803250341.jpg", name: "V: The Hierophant", keywords: "Tradition, Guidance, Beliefs", desc: "Seeking conventional wisdom, formal alignment, and institutional knowledge."},
+    {filename: "1792803258524.jpg", name: "VI: The Lovers", keywords: "Union, Harmony, Choices", desc: "Deep personal alignment, key choices, and emotional union."}
+];
+
+const SPREAD_CONFIGS = {
+    "1_card": { title: "Single Lens (1 Card)", positions: ["Focus / Core Insight"] },
+    "3_card": { title: "Melting Timeline (3 Cards)", positions: ["Past / Foundation", "Present / Current Flow", "Future / Horizon"] },
+    "5_card": { title: "Infinite Clock (5 Cards)", positions: ["Present Condition", "Hidden Influence", "Core Obstacle", "Action Path", "Potential Outcome"] },
+    "lovers": { title: "Lovers Alignment Spread", positions: ["Your Perspective", "Partner/Other's Energy", "Dynamic Connection", "Strengths", "Future Synthesis"] },
+    "career": { title: "Career Horizon Spread", positions: ["Current Status", "Opportunities", "Challenges", "Required Skill", "Career Direction"] },
+    "celtic": { title: "Celtic Cross Spread (10 Cards)", positions: ["1. Present State", "2. Immediate Challenge", "3. Distant Past", "4. Recent Past", "5. Best Outcome", "6. Immediate Future", "7. Self Attitude", "8. Environment", "9. Hopes & Fears", "10. Final Resolution"] }
+};
+
+let currentSpreadKey = "1_card";
+
+function startReading(key) {
+    currentSpreadKey = key;
+    document.getElementById('menu-view').classList.add('hidden');
+    document.getElementById('reading-view').classList.remove('hidden');
+    document.getElementById('reading-title').innerText = SPREAD_CONFIGS[key].title;
+    generateReading();
+}
+
+function showMenu() {
+    document.getElementById('reading-view').classList.add('hidden');
+    document.getElementById('menu-view').classList.remove('hidden');
+}
+
+function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function generateReading() {
+    const config = SPREAD_CONFIGS[currentSpreadKey];
+    const positions = config.positions;
+    const shuffled = shuffleArray(TAROT_CARDS);
+    
+    const drawnCards = [];
+    for (let i = 0; i < positions.length; i++) {
+        drawnCards.push(shuffled[i % shuffled.length]);
+    }
+
+    const container = document.getElementById('cards-container');
+    container.innerHTML = '';
+
+    drawnCards.forEach((card, index) => {
+        const box = document.createElement('div');
+        box.className = 'card-box';
+        
+        box.innerHTML = `
+            <div class="card-position">${positions[index]}</div>
+            <div class="card-img-container">
+                <div class="fallback-art">
+                    <div style="font-size: 1.4rem; margin-bottom: 2px;">👁️</div>
+                    <div style="font-size: 0.65rem; font-weight: bold;">${card.name}</div>
+                </div>
+                <img src="./${card.filename}" alt="${card.name}" onerror="this.style.display='none';">
+            </div>
+            <div class="card-info">
+                <div class="card-name">${card.name}</div>
+                <div class="card-keywords">${card.keywords}</div>
+            </div>
+        `;
+        container.appendChild(box);
+    });
+
+    generateSummary(config.title, positions, drawnCards);
+}
+
+function generateSummary(title, positions, cards) {
+    const coreThemes = cards.map(c => c.keywords.split(',')[0]);
+    let html = `<strong>Synthesis for ${title}:</strong><br><br>`;
+    html += `• <strong>Dominant Energies:</strong> ${coreThemes.join(', ')}<br><br>`;
+    html += `• <strong>Card Progression:</strong><br>`;
+    
+    positions.forEach((pos, idx) => {
+        html += `&nbsp;&nbsp;&nbsp;&nbsp;- <strong>${pos}:</strong> ${cards[idx].name} emphasizes <em>${cards[idx].keywords}</em>.<br>`;
+    });
+
+    html += `<br>• <strong>Surreal Outlook:</strong><br>`;
+    html += `The presence of <strong>${cards[0].name}</strong> as the foundation paired with <strong>${cards[cards.length - 1].name}</strong> in the closing position indicates a shift from initial momentum toward complete resolution across your timeline.`;
+
+    document.getElementById('summary-content').innerHTML = html;
+}
+</script>
+
+</body>
+</html>
