@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surreal Mystic Tarot — Dalí Edition</title>
+    <title>Dalí Surreal Tarot Readings</title>
     <style>
         :root {
             --bg-color: #0b0813;
@@ -13,322 +13,137 @@
             --text-purple: #d1c7f3;
             --sub-purple: #b1a7d8;
         }
-
         body {
             background-color: var(--bg-color);
             color: var(--text-purple);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            text-align: center;
-            padding: 16px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            min-height: 100vh;
-        }
-
-        h1 { 
-            color: var(--accent-gold); 
-            margin: 10px 0 5px 0; 
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(243, 229, 171, 0.2);
-        }
-
-        p.subtitle { 
-            color: var(--sub-purple); 
-            font-size: 0.85rem; 
-            margin-bottom: 20px; 
-        }
-
-        .controls {
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-width: 340px;
-            margin: 0 auto 25px auto;
+            align-items: center;
         }
-
-        select {
-            background-color: var(--card-bg);
+        h1 {
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        button.spread-btn {
+            background: linear-gradient(135deg, #4a235a, #2c1638);
             color: var(--accent-gold);
             border: 1px solid var(--border-purple);
-            padding: 12px;
-            font-size: 0.95rem;
-            border-radius: 10px;
-            outline: none;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
             text-align: center;
         }
-
-        button {
-            background: linear-gradient(135deg, #4a154b, #2b0b30);
+        button.spread-btn:hover {
+            background: linear-gradient(135deg, #6c3483, #4a235a);
+            border-color: var(--accent-gold);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .action-btn {
+            background: #311b4a;
             color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
-            padding: 14px 28px;
-            font-size: 1.1rem;
-            border-radius: 12px;
+            border: 1px solid var(--border-purple);
+            padding: 8px 14px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            transition: transform 0.1s;
         }
-
-        button:active { 
-            transform: scale(0.97); 
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
-
-        .spread {
+        .card-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-purple);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            max-width: 400px;
-            margin: 0 auto;
+            align-items: center;
         }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-purple);
-            border-radius: 14px;
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-        }
-
-        .card .pos { 
-            font-size: 0.75rem; 
-            color: var(--sub-purple); 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            font-weight: bold;
-        }
-
-        .card h3 { 
-            margin: 4px 0; 
-            color: var(--accent-gold); 
-            font-size: 1.2rem;
-        }
-
-        .card .orient { 
+        .card-position {
+            color: var(--accent-gold);
             font-size: 0.85rem;
-            color: #ffb74d;
-            margin-bottom: 10px;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
-
-        .card img {
-            width: 100%;
-            max-width: 320px;
-            height: auto;
+        .card-img {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border-purple);
+            background-color: #221533;
+        }
+        .card-info {
+            margin-top: 8px;
+            font-size: 0.85rem;
+        }
+        .card-name {
+            font-weight: bold;
+            color: #fff;
+        }
+        .card-keywords {
+            font-style: italic;
+            color: var(--sub-purple);
+            font-size: 0.8rem;
+            margin-top: 3px;
+        }
+        .summary-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-purple);
             border-radius: 8px;
-            margin: 5px 0 12px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            border: 1px solid rgba(243, 229, 171, 0.2);
-            transition: transform 0.4s ease;
+            padding: 15px;
+            margin-top: 15px;
         }
-
-        .card img.reversed {
-            transform: rotate(180deg);
+        .summary-box h3 {
+            color: var(--accent-gold);
+            margin-top: 0;
+            font-size: 1.1rem;
         }
-
-        .card p { 
-            margin: 0; 
-            font-size: 0.95rem; 
-            line-height: 1.4; 
-            color: var(--text-purple);
-            text-align: left;
-            border-top: 1px solid #2e244a;
-            padding-top: 10px;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <h1>👁️ Surreal Mystic Tarot</h1>
-    <p class="subtitle">Salvador Dalí Inspired Reading Engine</p>
-    
-    <div class="controls">
-        <select id="spreadType">
-            <option value="3card">3-Card Spread (Past / Present / Future)</option>
-            <option value="daily">Daily Single Card Oracle</option>
-            <option value="5card">5-Card Insight Spread</option>
-            <option value="lovers">Lovers / Relationship Spread</option>
-            <option value="career">Career / Path Spread</option>
-        </select>
-        <button onclick="drawTarot()">Reveal Spread</button>
+<div class="container">
+    <h1>🎨 DALÍ SURREAL TAROT</h1>
+
+    <!-- MENU VIEW -->
+    <div id="menu-view" class="menu-grid">
+        <button class="spread-btn" onclick="startReading('1_card')">Single Lens (1 Card)</button>
+        <button class="spread-btn" onclick="startReading('3_card')">Melting Timeline (3 Cards)</button>
+        <button class="spread-btn" onclick="startReading('5_card')">Infinite Clock (5 Cards)</button>
+        <button class="spread-btn" onclick="startReading('lovers')">Lovers Alignment Spread</button>
+        <button class="spread-btn" onclick="startReading('career')">Career Horizon Spread</button>
+        <button class="spread-btn" onclick="startReading('celtic')">Celtic Cross Spread (10 Cards)</button>
     </div>
 
-    <div id="results" class="spread"></div>
-
-    <script>
-        const deck = [
-            { 
-                name: "0. The Fool", 
-                image: "fool.jpg", 
-                upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", 
-                reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." 
-            },
-            { 
-                name: "I. The Magician", 
-                image: "magician.jpg", 
-                upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", 
-                reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." 
-            },
-            { 
-                name: "II. The High Priestess", 
-                image: "priestess.jpg", 
-                upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", 
-                reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." 
-            },
-            { 
-                name: "III. The Empress", 
-                image: "empress.jpg", 
-                upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", 
-                reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." 
-            },
-            { 
-                name: "IV. The Emperor", 
-                image: "emperor.jpg", 
-                upright: "Authority, structure, stability, leadership, establishing solid foundations.", 
-                reversed: "Tyranny, excessive control, rigidity, lack of discipline." 
-            },
-            { 
-                name: "V. The Hierophant", 
-                image: "hierophant.jpg", 
-                upright: "Spiritual wisdom, traditions, institutions, guidance, shared beliefs.", 
-                reversed: "Rebellion, breaking traditions, restriction, unorthodox methods." 
-            },
-            { 
-                name: "VI. The Lovers", 
-                image: "lovers.jpg", 
-                upright: "Divine union, choices aligned with core values, harmony, vulnerability.", 
-                reversed: "Disharmony, misalignment, bad choices, internal conflict." 
-            },
-            { 
-                name: "VII. The Chariot", 
-                image: "chariot.jpg", 
-                upright: "Control, willpower, success, action, determination moving forward.", 
-                reversed: "Lack of control, opposition, directionless momentum, aggression." 
-            },
-            { 
-                name: "VIII. Strength", 
-                image: "strength.jpg", 
-                upright: "Courage, compassion, inner patience, gentle control over raw impulses.", 
-                reversed: "Self-doubt, raw emotion, weakness, lack of confidence." 
-            },
-            { 
-                name: "IX. The Hermit", 
-                image: "hermit.jpg", 
-                upright: "Soul-searching, introspection, solitude, inner guidance, awareness.", 
-                reversed: "Isolation, loneliness, withdrawal, lost on the path." 
-            },
-            { 
-                name: "X. The Wheel of Fortune", 
-                image: "wheel_of_fortune.jpg", 
-                upright: "Cycles, shifting epochs, destiny, turning points, good luck.", 
-                reversed: "Bad luck, resistance to change, breaking cycles, setbacks." 
-            },
-            { 
-                name: "XI. Justice", 
-                image: "justice.jpg", 
-                upright: "Fairness, truth, cause and effect, law, accountability.", 
-                reversed: "Dishonesty, unfairness, lack of accountability, corruption." 
-            },
-            { 
-                name: "XII. The Hanged Man", 
-                image: "hanged_man.jpg", 
-                upright: "Surrender, letting go, new perspectives, pausing in time.", 
-                reversed: "Stagnation, useless sacrifice, resistance to change, delay." 
-            },
-            { 
-                name: "XIII. Death", 
-                image: "death.jpg", 
-                upright: "Endings, transformation, transition, letting go of old attachments.", 
-                reversed: "Fear of change, holding on to decay, delayed transformation." 
-            },
-            { 
-                name: "XIV. Temperance", 
-                image: "temperance.jpg", 
-                upright: "Balance, moderation, patience, alchemy, finding inner peace.", 
-                reversed: "Imbalance, excess, lack of patience, conflicting energies." 
-            },
-            { 
-                name: "XV. The Devil", 
-                image: "devil.jpg", 
-                upright: "Shadow self, attachment, restriction, addiction, material illusion.", 
-                reversed: "Freedom, breaking chains, overcoming addiction, reclaiming control." 
-            },
-            { 
-                name: "XVI. The Tower", 
-                image: "tower.jpg", 
-                upright: "Sudden upheaval, revelation, breakdown of false structures, awakening.", 
-                reversed: "Avoiding disaster, fear of suffering, delayed necessary breakdown." 
-            },
-            { 
-                name: "XVII. The Star", 
-                image: "star.jpg", 
-                upright: "Hope, faith, renewal, inspiration, spiritual guidance, clarity.", 
-                reversed: "Despair, lack of faith, hopelessness, disconnection, pessimism." 
-            },
-            { 
-                name: "XVIII. The Moon", 
-                image: "moon.jpg", 
-                upright: "Illusion, fear, subconscious mind, intuition, navigating the dark.", 
-                reversed: "Release of fear, unveiling secrets, overcoming anxiety, clarity." 
-            },
-            { 
-                name: "XIX. The Sun", 
-                image: "sun.jpg", 
-                upright: "Joy, success, celebration, vitality, warmth, unbridled optimism.", 
-                reversed: "Temporary depression, overly optimistic views, dimmed light." 
-            },
-            { 
-                name: "XX. Judgement", 
-                image: "judgement.jpg", 
-                upright: "Rebirth, inner calling, absolution, reflection, awakening.", 
-                reversed: "Self-doubt, harsh self-judgment, ignoring the call." 
-            },
-            { 
-                name: "XXI. The World", 
-                image: "world.jpg", 
-                upright: "Completion, accomplishment, travel, fulfillment, a major life cycle ending.", 
-                reversed: "Lack of closure, incomplete goals, delays in success." 
-            }
-        ];
-
-        const spreadLayouts = {
-            "daily": ["Daily Guidance"],
-            "3card": ["Past", "Present", "Future"],
-            "5card": ["Present Situation", "Hidden Influence", "Obstacle", "Advice", "Outcome"],
-            "lovers": ["Your Energy", "Partner Energy", "Relationship Dynamics", "Challenge", "Potential"],
-            "career": ["Current Path", "Upcoming Opportunity", "Obstacle to Overcome", "Financial Outlook", "Long Term Goal"]
-        };
-
-        function drawTarot() {
-            const spreadKey = document.getElementById("spreadType").value;
-            const positions = spreadLayouts[spreadKey];
-            
-            const shuffled = [...deck].sort(() => 0.5 - Math.random());
-            const selected = shuffled.slice(0, positions.length);
-            
-            const container = document.getElementById("results");
-            container.innerHTML = "";
-
-            selected.forEach((card, index) => {
-                const isReversed = Math.random() < 0.5;
-                const meaning = isReversed ? card.reversed : card.upright;
-                const orientation = isReversed ? "Reversed 🔄" : "Upright ✨";
-                const imgClass = isReversed ? "reversed" : "";
-
-                const cardDiv = document.createElement("div");
-                cardDiv.className = "card";
-                cardDiv.innerHTML = `
-                    <div class="pos">${positions[index]}</div>
-                    <h3>${card.name}</h3>
-                    <div class="orient">${orientation}</div>
-                    <img src="${card.image}" alt="${card.name}" class="${imgClass}" onerror="this.onerror=null; this.src='https://picsum.photos/320/200?grayscale';">
-                    <p>${meaning}</p>
-                `;
-                container.appendChild(cardDiv);
-            });
-        }
-
-        window.onload = drawTarot;
-    </script>
-</body>
-</html>
+    <!--
