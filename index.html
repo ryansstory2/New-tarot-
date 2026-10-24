@@ -3,23 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surreal Mystic Tarot — Salvador Dalí Edition</title>
+    <title>Surreal Mystic Tarot — Dalí Edition</title>
     <style>
         :root {
-            --bg-color: #09070f;
-            --card-bg: #150f24;
+            --bg-color: #0b0813;
+            --card-bg: #161124;
             --accent-gold: #f3e5ab;
-            --accent-gold-glow: rgba(243, 229, 171, 0.35);
             --border-purple: #4a3b75;
-            --text-purple: #e0d9f6;
+            --text-purple: #d1c7f3;
             --sub-purple: #b1a7d8;
-            --panel-bg: rgba(22, 16, 38, 0.92);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
@@ -28,79 +20,34 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             text-align: center;
             padding: 16px;
+            margin: 0;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 50% 10%, rgba(74, 59, 117, 0.15), transparent 60%),
-                radial-gradient(circle at 20% 80%, rgba(243, 229, 171, 0.05), transparent 40%);
         }
 
         h1 { 
             color: var(--accent-gold); 
-            margin: 10px 0 4px 0; 
+            margin: 10px 0 5px 0; 
             font-size: 1.8rem;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 12px var(--accent-gold-glow);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(243, 229, 171, 0.2);
         }
 
         p.subtitle { 
             color: var(--sub-purple); 
             font-size: 0.85rem; 
             margin-bottom: 20px; 
-            font-style: italic;
         }
 
-        .main-nav {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            background: var(--card-bg);
-            color: var(--sub-purple);
-            border: 1px solid var(--border-purple);
-            padding: 10px 18px;
-            font-size: 0.9rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #4a154b, #2b0b30);
-            color: var(--accent-gold);
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 10px var(--accent-gold-glow);
-        }
-
-        .panel {
-            display: none;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .panel.active {
-            display: block;
-        }
-
-        /* Controls */
         .controls {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-width: 360px;
+            max-width: 340px;
             margin: 0 auto 25px auto;
-            background: var(--panel-bg);
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid var(--border-purple);
-            backdrop-filter: blur(8px);
         }
 
         select {
-            background-color: var(--bg-color);
+            background-color: var(--card-bg);
             color: var(--accent-gold);
             border: 1px solid var(--border-purple);
             padding: 12px;
@@ -108,459 +55,77 @@
             border-radius: 10px;
             outline: none;
             text-align: center;
-            width: 100%;
         }
 
-        .action-btn {
-            background: linear-gradient(135deg, #5b1b5d, #2b0b30);
+        button {
+            background: linear-gradient(135deg, #4a154b, #2b0b30);
             color: var(--accent-gold);
             border: 2px solid var(--accent-gold);
             padding: 14px 28px;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            transition: transform 0.1s, box-shadow 0.2s;
-            width: 100%;
+            transition: transform 0.1s;
         }
 
-        .action-btn:active { 
+        button:active { 
             transform: scale(0.97); 
         }
 
-        /* Spreads */
         .spread {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
+            max-width: 400px;
             margin: 0 auto;
-            max-width: 450px;
-        }
-
-        .card-container {
-            perspective: 1000px;
         }
 
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-purple);
-            border-radius: 16px;
+            border-radius: 14px;
             padding: 16px;
             text-align: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-            transition: transform 0.3s ease;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
         }
 
         .card .pos { 
             font-size: 0.75rem; 
             color: var(--sub-purple); 
             text-transform: uppercase; 
-            letter-spacing: 2px; 
-            font-weight: 700;
-            margin-bottom: 2px;
+            letter-spacing: 1.5px; 
+            font-weight: bold;
         }
 
         .card h3 { 
-            margin: 2px 0 4px 0; 
+            margin: 4px 0; 
             color: var(--accent-gold); 
-            font-size: 1.25rem;
+            font-size: 1.2rem;
         }
 
         .card .orient { 
             font-size: 0.85rem;
             color: #ffb74d;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .card-art {
+        .card img {
             width: 100%;
             max-width: 320px;
             height: auto;
-            border-radius: 10px;
-            margin: 0 auto 14px auto;
-            display: block;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.7);
-            border: 1px solid rgba(243, 229, 171, 0.25);
-            transition: transform 0.5s ease;
+            border-radius: 8px;
+            margin: 5px 0 12px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border: 1px solid rgba(243, 229, 171, 0.2);
+            transition: transform 0.4s ease;
         }
 
-        .card-art.reversed {
+        .card img.reversed {
             transform: rotate(180deg);
         }
 
         .card p { 
             margin: 0; 
-            font-size: 0.95rem; 
-            line-height: 1.45; 
-            color: var(--text-purple);
-            text-align: left;
-            border-top: 1px solid #2e244a;
-            padding-top: 12px;
-        }
-
-        /* Customizer Studio */
-        .customizer-grid {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-purple);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            backdrop-filter: blur(8px);
-        }
-
-        .customizer-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .customizer-group label {
-            font-size: 0.85rem;
-            color: var(--accent-gold);
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .customizer-group input[type="range"] {
-            width: 100%;
-            accent-color: var(--accent-gold);
-        }
-
-        .color-row {
-            display: flex;
-            gap: 12px;
-        }
-
-        .color-picker-box {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .color-picker-box label {
-            font-size: 0.75rem;
-            color: var(--sub-purple);
-        }
-
-        .color-picker-box input[type="color"] {
-            width: 100%;
-            height: 38px;
-            border: 1px solid var(--border-purple);
-            border-radius: 8px;
-            background: none;
-            cursor: pointer;
-        }
-
-        .preset-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 4px;
-        }
-
-        .preset-btn {
-            background: var(--bg-color);
-            color: var(--text-purple);
-            border: 1px solid var(--border-purple);
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .preview-box {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .preview-box h4 {
-            color: var(--sub-purple);
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-        }
-
-        #previewArt {
-            max-width: 280px;
-            margin: 0 auto;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>👁️ Surreal Mystic Tarot</h1>
-    <p class="subtitle">Salvador Dalí Visual Engine & Reading Suite</p>
-
-    <div class="main-nav">
-        <button class="tab-btn active" onclick="switchTab('reading')">🔮 Reading Room</button>
-        <button class="tab-btn" onclick="switchTab('customizer')">🎨 Artwork Customizer</button>
-    </div>
-
-    <!-- TAB 1: READING ROOM -->
-    <div id="readingPanel" class="panel active">
-        <div class="controls">
-            <select id="spreadType">
-                <option value="3card">3-Card Spread (Past / Present / Future)</option>
-                <option value="daily">Daily Single Card Oracle</option>
-                <option value="5card">5-Card Insight Spread</option>
-                <option value="lovers">Lovers / Relationship Spread</option>
-                <option value="career">Career / Path Spread</option>
-            </select>
-            <button class="action-btn" onclick="drawTarot()">Reveal Cards</button>
-        </div>
-
-        <div id="results" class="spread"></div>
-    </div>
-
-    <!-- TAB 2: ARTWORK CUSTOMIZER -->
-    <div id="customizerPanel" class="panel">
-        <div class="customizer-grid">
-            <div class="preset-row">
-                <span style="font-size:0.8rem; color:var(--sub-purple); align-self:center;">Presets:</span>
-                <button class="preset-btn" onclick="applyPreset('obsidian')">Obsidian & Gold</button>
-                <button class="preset-btn" onclick="applyPreset('twilight')">Desert Twilight</button>
-                <button class="preset-btn" onclick="applyPreset('cyber')">Cyber Surreal</button>
-                <button class="preset-btn" onclick="applyPreset('parchment')">Vintage Canvas</button>
-            </div>
-
-            <div class="color-row">
-                <div class="color-picker-box">
-                    <label>Sky Gradient (Top)</label>
-                    <input type="color" id="skyTop" value="#120c24" oninput="updateCustomStyle()">
-                </div>
-                <div class="color-picker-box">
-                    <label>Sky Gradient (Bottom)</label>
-                    <input type="color" id="skyBottom" value="#3b1d4a" oninput="updateCustomStyle()">
-                </div>
-            </div>
-
-            <div class="color-row">
-                <div class="color-picker-box">
-                    <label>Sand Dunes</label>
-                    <input type="color" id="duneColor" value="#2a162d" oninput="updateCustomStyle()">
-                </div>
-                <div class="color-picker-box">
-                    <label>Melting Gold Accent</label>
-                    <input type="color" id="goldColor" value="#f3e5ab" oninput="updateCustomStyle()">
-                </div>
-            </div>
-
-            <div class="customizer-group">
-                <label>Melting Clock Drip Length <span id="dripVal">40</span></label>
-                <input type="range" id="dripLen" min="10" max="80" value="40" oninput="updateCustomStyle()">
-            </div>
-
-            <div class="customizer-group">
-                <label>Surreal Horizon Distortion <span id="distVal">12</span></label>
-                <input type="range" id="horizonDist" min="0" max="30" value="12" oninput="updateCustomStyle()">
-            </div>
-
-            <div class="customizer-group">
-                <label>Surreal Element Glow <span id="glowVal">15</span></label>
-                <input type="range" id="glowPower" min="0" max="40" value="15" oninput="updateCustomStyle()">
-            </div>
-
-            <button class="action-btn" onclick="saveCustomStyle()">Apply Custom Style to All Cards</button>
-
-            <div class="preview-box">
-                <h4>Live Visual Preview</h4>
-                <div id="previewArt"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Customizer Config
-        let artStyle = {
-            skyTop: '#120c24',
-            skyBottom: '#3b1d4a',
-            duneColor: '#2a162d',
-            goldColor: '#f3e5ab',
-            dripLen: 40,
-            horizonDist: 12,
-            glowPower: 15
-        };
-
-        const presets = {
-            obsidian: { skyTop: '#120c24', skyBottom: '#3b1d4a', duneColor: '#2a162d', goldColor: '#f3e5ab', dripLen: 40, horizonDist: 12, glowPower: 15 },
-            twilight: { skyTop: '#1e0f1c', skyBottom: '#8c3a5c', duneColor: '#4a1e35', goldColor: '#ffd700', dripLen: 55, horizonDist: 18, glowPower: 20 },
-            cyber: { skyTop: '#051329', skyBottom: '#2d083a', duneColor: '#122536', goldColor: '#00f0ff', dripLen: 30, horizonDist: 8, glowPower: 30 },
-            parchment: { skyTop: '#2b231d', skyBottom: '#594433', duneColor: '#3a2d21', goldColor: '#e6c885', dripLen: 25, horizonDist: 5, glowPower: 8 }
-        };
-
-        const deck = [
-            { name: "0. The Fool", num: "0", symbol: "🃡", upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." },
-            { name: "I. The Magician", num: "I", symbol: "🪄", upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." },
-            { name: "II. The High Priestess", num: "II", symbol: "🌙", upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." },
-            { name: "III. The Empress", num: "III", symbol: "👑", upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." },
-            { name: "IV. The Emperor", num: "IV", symbol: "🏛️", upright: "Authority, structure, stability, leadership, establishing solid foundations.", reversed: "Tyranny, excessive control, rigidity, lack of discipline." },
-            { name: "V. The Hierophant", num: "V", symbol: "🔑", upright: "Spiritual wisdom, traditions, institutions, guidance, shared beliefs.", reversed: "Rebellion, breaking traditions, restriction, unorthodox methods." },
-            { name: "VI. The Lovers", num: "VI", symbol: "🫀", upright: "Divine union, choices aligned with core values, harmony, vulnerability.", reversed: "Disharmony, misalignment, bad choices, internal conflict." },
-            { name: "X. The Wheel of Fortune", num: "X", symbol: "🎡", upright: "Cycles, shifting epochs, destiny, turning points, good luck.", reversed: "Bad luck, resistance to change, breaking cycles, setbacks." },
-            { name: "XI. Justice", num: "XI", symbol: "⚖️", upright: "Fairness, truth, cause and effect, law, accountability.", reversed: "Dishonesty, unfairness, lack of accountability, corruption." },
-            { name: "XII. The Hanged Man", num: "XII", symbol: "⏳", upright: "Surrender, letting go, new perspectives, pausing in time.", reversed: "Stagnation, useless sacrifice, resistance to change, delay." },
-            { name: "XIII. Death", num: "XIII", symbol: "💀", upright: "Endings, transformation, transition, letting go of old attachments.", reversed: "Fear of change, holding on to decay, delayed transformation." },
-            { name: "XIV. Temperance", num: "XIV", symbol: "🏺", upright: "Balance, moderation, patience, alchemy, finding inner peace.", reversed: "Imbalance, excess, lack of patience, conflicting energies." },
-            { name: "XV. The Devil", num: "XV", symbol: "⛓️", upright: "Shadow self, attachment, restriction, addiction, material illusion.", reversed: "Freedom, breaking chains, overcoming addiction, reclaiming control." },
-            { name: "XVI. The Tower", num: "XVI", symbol: "⚡", upright: "Sudden upheaval, revelation, breakdown of false structures, awakening.", reversed: "Avoiding disaster, fear of suffering, delayed necessary breakdown." },
-            { name: "XVII. The Star", num: "XVII", symbol: "👁️", upright: "Hope, faith, renewal, inspiration, spiritual guidance, clarity.", reversed: "Despair, lack of faith, hopelessness, disconnection, pessimism." },
-            { name: "XVIII. The Moon", num: "XVIII", symbol: "🐺", upright: "Illusion, fear, subconscious mind, intuition, navigating the dark.", reversed: "Release of fear, unveiling secrets, overcoming anxiety, clarity." },
-            { name: "XXI. The World", num: "XXI", symbol: "🌐", upright: "Completion, accomplishment, travel, fulfillment, a major life cycle ending.", reversed: "Lack of closure, incomplete goals, delays in success." }
-        ];
-
-        const spreadLayouts = {
-            "daily": ["Daily Guidance"],
-            "3card": ["Past", "Present", "Future"],
-            "5card": ["Present Situation", "Hidden Influence", "Obstacle", "Advice", "Outcome"],
-            "lovers": ["Your Energy", "Partner Energy", "Relationship Dynamics", "Challenge", "Potential"],
-            "career": ["Current Path", "Upcoming Opportunity", "Obstacle to Overcome", "Financial Outlook", "Long Term Goal"]
-        };
-
-        // Generate Dynamic Salvador Dalí SVG Card
-        function createDaliSVG(card, cfg = artStyle) {
-            const drip = cfg.dripLen;
-            const dist = cfg.horizonDist;
-            const glow = cfg.glowPower;
-
-            return `
-            <svg class="card-art" viewBox="0 0 320 480" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="${cfg.skyTop}"/>
-                        <stop offset="100%" stop-color="${cfg.skyBottom}"/>
-                    </linearGradient>
-                    <filter id="daliGlow">
-                        <feGaussianBlur stdDeviation="${glow / 5}" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-
-                <!-- Sky Background -->
-                <rect width="320" height="480" rx="10" fill="url(#skyGrad)"/>
-
-                <!-- Distorted Surreal Landscape / Dunes -->
-                <path d="M 0 320 Q 80 ${300 - dist} 160 320 T 320 ${310 + dist} L 320 480 L 0 480 Z" fill="${cfg.duneColor}"/>
-                <path d="M 0 360 Q 120 ${380 + dist} 240 350 T 320 370 L 320 480 L 0 480 Z" fill="#090510" opacity="0.6"/>
-
-                <!-- Cosmic Surreal Eyes in Sky -->
-                <ellipse cx="160" cy="90" rx="45" ry="22" fill="none" stroke="${cfg.goldColor}" stroke-width="1.5" opacity="0.4"/>
-                <circle cx="160" cy="90" r="12" fill="${cfg.goldColor}" opacity="0.7" filter="url(#daliGlow)"/>
-
-                <!-- Stilt Legs / Crutch Motif -->
-                <path d="M 50 440 L 80 ${220 - dist} M 80 ${220 - dist} L 110 440" stroke="${cfg.goldColor}" stroke-width="1.5" opacity="0.3"/>
-                <path d="M 270 440 L 240 ${200 + dist} M 240 ${200 + dist} L 210 440" stroke="${cfg.goldColor}" stroke-width="1.5" opacity="0.3"/>
-
-                <!-- Melting Clock Motif -->
-                <g filter="url(#daliGlow)">
-                    <path d="M 110 180 C 110 150, 210 150, 210 180 C 210 ${200 + drip}, 180 ${220 + drip}, 160 ${230 + drip} C 140 ${220 + drip}, 110 ${200 + drip}, 110 180 Z" 
-                          fill="rgba(255,255,255,0.08)" stroke="${cfg.goldColor}" stroke-width="2"/>
-                    <!-- Clock Hands -->
-                    <line x1="160" y1="180" x2="140" y2="195" stroke="${cfg.goldColor}" stroke-width="2"/>
-                    <line x1="160" y1="180" x2="175" y2="210" stroke="${cfg.goldColor}" stroke-width="1.5"/>
-                    <circle cx="160" cy="180" r="3" fill="${cfg.goldColor}"/>
-                </g>
-
-                <!-- Center Symbol Icon -->
-                <text x="160" y="290" font-size="38" text-anchor="middle" fill="${cfg.goldColor}" filter="url(#daliGlow)">${card.symbol}</text>
-
-                <!-- Card Title Banner -->
-                <rect x="20" y="415" width="280" height="42" rx="8" fill="#110a1f" stroke="${cfg.goldColor}" stroke-width="1" opacity="0.9"/>
-                <text x="160" y="441" font-size="15" font-weight="bold" fill="${cfg.goldColor}" text-anchor="middle" letter-spacing="1">${card.name.toUpperCase()}</text>
-            </svg>`;
-        }
-
-        function drawTarot() {
-            const spreadKey = document.getElementById("spreadType").value;
-            const positions = spreadLayouts[spreadKey];
-            
-            const shuffled = [...deck].sort(() => 0.5 - Math.random());
-            const selected = shuffled.slice(0, positions.length);
-            
-            const container = document.getElementById("results");
-            container.innerHTML = "";
-
-            selected.forEach((card, index) => {
-                const isReversed = Math.random() < 0.5;
-                const meaning = isReversed ? card.reversed : card.upright;
-                const orientation = isReversed ? "Reversed 🔄" : "Upright ✨";
-                const imgClass = isReversed ? "reversed" : "";
-                const cardSvg = createDaliSVG(card, artStyle);
-
-                const cardDiv = document.createElement("div");
-                cardDiv.className = "card-container";
-                cardDiv.innerHTML = `
-                    <div class="card">
-                        <div class="pos">${positions[index]}</div>
-                        <h3>${card.name}</h3>
-                        <div class="orient">${orientation}</div>
-                        <div class="${imgClass}">${cardSvg}</div>
-                        <p>${meaning}</p>
-                    </div>
-                `;
-                container.appendChild(cardDiv);
-            });
-        }
-
-        // Tab Switching
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-
-            if (tab === 'reading') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('readingPanel').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('customizerPanel').classList.add('active');
-                updateCustomStyle();
-            }
-        }
-
-        // Customizer controls
-        function updateCustomStyle() {
-            artStyle.skyTop = document.getElementById('skyTop').value;
-            artStyle.skyBottom = document.getElementById('skyBottom').value;
-            artStyle.duneColor = document.getElementById('duneColor').value;
-            artStyle.goldColor = document.getElementById('goldColor').value;
-            artStyle.dripLen = parseInt(document.getElementById('dripLen').value);
-            artStyle.horizonDist = parseInt(document.getElementById('horizonDist').value);
-            artStyle.glowPower = parseInt(document.getElementById('glowPower').value);
-
-            document.getElementById('dripVal').innerText = artStyle.dripLen;
-            document.getElementById('distVal').innerText = artStyle.horizonDist;
-            document.getElementById('glowVal').innerText = artStyle.glowPower;
-
-            document.getElementById('previewArt').innerHTML = createDaliSVG(deck[0], artStyle);
-        }
-
-        function applyPreset(name) {
-            const p = presets[name];
-            document.getElementById('skyTop').value = p.skyTop;
-            document.getElementById('skyBottom').value = p.skyBottom;
-            document.getElementById('duneColor').value = p.duneColor;
-            document.getElementById('goldColor').value = p.goldColor;
-            document.getElementById('dripLen').value = p.dripLen;
-            document.getElementById('horizonDist').value = p.horizonDist;
-            document.getElementById('glowPower').value = p.glowPower;
-            updateCustomStyle();
-        }
-
-        function saveCustomStyle() {
-            switchTab('reading');
-            drawTarot();
-        }
-
-        window.onload = function() {
-            drawTarot();
-        };
-    </script>
-</body>
-</html>
+            font-size: 
