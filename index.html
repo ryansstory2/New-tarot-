@@ -1,26 +1,248 @@
-const deck = [
-    { 
-        name: "0. The Fool", 
-        image: "fool.jpg",
-        upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", 
-        reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." 
-    },
-    { 
-        name: "I. The Magician", 
-        image: "magician.jpg",
-        upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", 
-        reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." 
-    },
-    { 
-        name: "II. The High Priestess", 
-        image: "priestess.jpg",
-        upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", 
-        reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." 
-    },
-    { 
-        name: "III. The Empress", 
-        image: "empress.jpg",
-        upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", 
-        reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." 
-    }
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surreal Mystic Tarot</title>
+    <style>
+        body {
+            background-color: #0f0c1b;
+            color: #e0d9f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { 
+            color: #f3e5ab; 
+            margin-bottom: 5px; 
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+        p.subtitle { 
+            color: #b1a7d8; 
+            font-size: 0.9rem; 
+            margin-bottom: 25px; 
+        }
+        button {
+            background: linear-gradient(135deg, #4a154b, #2b0b30);
+            color: #f3e5ab;
+            border: 2px solid #f3e5ab;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 300px;
+            transition: transform 0.2s;
+        }
+        button:active { 
+            transform: scale(0.97); 
+        }
+        .spread {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 25px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card {
+            background: #1a1528;
+            border: 1px solid #4a3b75;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .card img {
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.4s ease;
+            border: 1px solid #f3e5ab33;
+        }
+        .card img.reversed {
+            transform: rotate(180deg);
+        }
+        .card h3 { 
+            margin: 5px 0 2px 0; 
+            color: #f3e5ab; 
+            font-size: 1.2rem;
+        }
+        .card .pos { 
+            font-size: 0.75rem; 
+            color: #b1a7d8; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: bold;
+        }
+        .card .orient { 
+            font-weight: normal; 
+            color: #ffb74d; 
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .card p { 
+            margin: 8px 0 0 0; 
+            font-size: 0.95rem; 
+            line-height: 1.4; 
+            color: #d1c7f3;
+            text-align: left;
+            border-top: 1px solid #2e244a;
+            padding-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>👁️ Surreal Mystic Tarot</h1>
+    <p class="subtitle">Step into the dreamscape — reveal your Past, Present, and Future</p>
+    
+    <button onclick="drawTarot()">Draw 3-Card Spread</button>
+
+    <div id="results" class="spread"></div>
+
+    <script>
+        const deck = [
+            { 
+                name: "0. The Fool", 
+                image: "fool.jpg", 
+                upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", 
+                reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." 
+            },
+            { 
+                name: "I. The Magician", 
+                image: "magician.jpg", 
+                upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", 
+                reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." 
+            },
+            { 
+                name: "II. The High Priestess", 
+                image: "priestess.jpg", 
+                upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", 
+                reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." 
+            },
+            { 
+                name: "III. The Empress", 
+                image: "empress.jpg", 
+                upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", 
+                reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." 
+            },
+            { 
+                name: "IV. The Emperor", 
+                image: "emperor.jpg", 
+                upright: "Authority, structure, stability, leadership, establishing solid foundations.", 
+                reversed: "Tyranny, excessive control, rigidity, lack of discipline." 
+            },
+            { 
+                name: "V. The Hierophant", 
+                image: "hierophant.jpg", 
+                upright: "Spiritual wisdom, traditions, institutions, guidance, shared beliefs.", 
+                reversed: "Rebellion, breaking traditions, restriction, unorthodox methods." 
+            },
+            { 
+                name: "VI. The Lovers", 
+                image: "lovers.jpg", 
+                upright: "Divine union, choices aligned with core values, harmony, vulnerability.", 
+                reversed: "Disharmony, misalignment, bad choices, internal conflict." 
+            },
+            { 
+                name: "X. The Wheel of Fortune", 
+                image: "wheel_of_fortune.jpg", 
+                upright: "Cycles, shifting epochs, destiny, turning points, good luck.", 
+                reversed: "Bad luck, resistance to change, breaking cycles, setbacks." 
+            },
+            { 
+                name: "XI. Justice", 
+                image: "justice.jpg", 
+                upright: "Fairness, truth, cause and effect, law, accountability.", 
+                reversed: "Dishonesty, unfairness, lack of accountability, corruption." 
+            },
+            { 
+                name: "XII. The Hanged Man", 
+                image: "hanged_man.jpg", 
+                upright: "Surrender, letting go, new perspectives, pausing in time.", 
+                reversed: "Stagnation, useless sacrifice, resistance to change, delay." 
+            },
+            { 
+                name: "XIII. Death", 
+                image: "death.jpg", 
+                upright: "Endings, transformation, transition, letting go of old attachments.", 
+                reversed: "Fear of change, holding on to decay, delayed transformation." 
+            },
+            { 
+                name: "XIV. Temperance", 
+                image: "temperance.jpg", 
+                upright: "Balance, moderation, patience, alchemy, finding inner peace.", 
+                reversed: "Imbalance, excess, lack of patience, conflicting energies." 
+            },
+            { 
+                name: "XV. The Devil", 
+                image: "devil.jpg", 
+                upright: "Shadow self, attachment, restriction, addiction, material illusion.", 
+                reversed: "Freedom, breaking chains, overcoming addiction, reclaiming control." 
+            },
+            { 
+                name: "XVI. The Tower", 
+                image: "tower.jpg", 
+                upright: "Sudden upheaval, revelation, breakdown of false structures, awakening.", 
+                reversed: "Avoiding disaster, fear of suffering, delayed necessary breakdown." 
+            },
+            { 
+                name: "XVII. The Star", 
+                image: "star.jpg", 
+                upright: "Hope, faith, renewal, inspiration, spiritual guidance, clarity.", 
+                reversed: "Despair, lack of faith, hopelessness, disconnection, pessimism." 
+            },
+            { 
+                name: "XVIII. The Moon", 
+                image: "moon.jpg", 
+                upright: "Illusion, fear, subconscious mind, intuition, navigating the dark.", 
+                reversed: "Release of fear, unveiling secrets, overcoming anxiety, clarity." 
+            },
+            { 
+                name: "XXI. The World", 
+                image: "world.jpg", 
+                upright: "Completion, accomplishment, travel, fulfillment, a major life cycle ending.", 
+                reversed: "Lack of closure, incomplete goals, delays in success." 
+            }
+        ];
+
+        function drawTarot() {
+            const shuffled = [...deck].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 3);
+            const positions = ["Past", "Present", "Future"];
+            
+            const container = document.getElementById("results");
+            container.innerHTML = "";
+
+            selected.forEach((card, index) => {
+                const isReversed = Math.random() < 0.5;
+                const meaning = isReversed ? card.reversed : card.upright;
+                const orientation = isReversed ? "Reversed 🔄" : "Upright ✨";
+                const imgClass = isReversed ? "reversed" : "";
+
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "card";
+                cardDiv.innerHTML = `
+                    <div class="pos">${positions[index]}</div>
+                    <h3>${card.name}</h3>
+                    <div class="orient">${orientation}</div>
+                    <img src="${card.image}" alt="${card.name}" class="${imgClass}">
+                    <p>${meaning}</p>
+                `;
+                container.appendChild(cardDiv);
+            });
+        }
+
+        window.onload = drawTarot;
+    </script>
+</body>
+</html>
