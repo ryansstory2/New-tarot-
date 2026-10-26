@@ -25,9 +25,9 @@
         }
         h1 {
             color: var(--accent-gold);
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             letter-spacing: 1px;
         }
         .container {
@@ -43,7 +43,7 @@
             background: linear-gradient(135deg, #4a235a, #2c1638);
             color: var(--accent-gold);
             border: 1px solid var(--border-purple);
-            padding: 14px;
+            padding: 15px;
             font-size: 1rem;
             font-weight: bold;
             border-radius: 8px;
@@ -59,7 +59,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .action-btn {
             background: #311b4a;
@@ -69,11 +69,10 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9rem;
         }
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -86,74 +85,34 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         .card-position {
             color: var(--accent-gold);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: bold;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
-        .card-img-container {
-            width: 140px;
-            height: 200px;
-            position: relative;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--accent-gold);
-            background: linear-gradient(145deg, #1f1432, #100b1d);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .card-img-container img {
-            width: 100%;
-            height: 100%;
+        .card-img {
+            width: 120px;
+            height: 180px;
             object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 2;
-        }
-        .fallback-art {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: var(--accent-gold);
-            padding: 10px;
-            box-sizing: border-box;
-            text-align: center;
-            z-index: 1;
+            border-radius: 4px;
+            border: 1px solid var(--border-purple);
+            background-color: #221533;
         }
         .card-info {
             margin-top: 8px;
             font-size: 0.85rem;
-            width: 100%;
         }
         .card-name {
             font-weight: bold;
             color: #fff;
-            font-size: 0.9rem;
         }
         .card-keywords {
             font-style: italic;
             color: var(--sub-purple);
-            font-size: 0.75rem;
-            margin-top: 2px;
-        }
-        .card-debug {
-            font-size: 0.65rem;
-            color: #8878b0;
-            margin-top: 4px;
-            font-family: monospace;
+            font-size: 0.8rem;
+            margin-top: 3px;
         }
         .summary-box {
             background-color: var(--card-bg);
@@ -161,15 +120,14 @@
             border-radius: 8px;
             padding: 15px;
             margin-top: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         .summary-box h3 {
             color: var(--accent-gold);
             margin-top: 0;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
         }
         .hidden {
-            display: none !important;
+            display: none;
         }
     </style>
 </head>
@@ -192,7 +150,7 @@
     <div id="reading-view" class="hidden">
         <div class="top-bar">
             <button class="action-btn" onclick="showMenu()">← MENU</button>
-            <span id="reading-title" style="font-weight: bold; color: var(--accent-gold); font-size: 0.95rem;"></span>
+            <span id="reading-title" style="font-weight: bold; color: var(--accent-gold);"></span>
             <button class="action-btn" onclick="generateReading()">🔄 REDRAW</button>
         </div>
 
@@ -200,22 +158,30 @@
 
         <div class="summary-box">
             <h3>Reading Summary & Synthesis</h3>
-            <div id="summary-content" style="font-size: 0.85rem; line-height: 1.4;"></div>
+            <div id="summary-content" style="font-size: 0.9rem; line-height: 1.5;"></div>
         </div>
     </div>
 </div>
 
 <script>
 const TAROT_CARDS = [
-    {filename: "1792803065598.jpg", name: "0: The Fool", keywords: "Beginnings, Spontaneity, Leap of Faith", desc: "Taking a surreal leap into the unknown, trusting the unfolding journey."},
-    {filename: "1792803189707.jpg", name: "I: The Magician", keywords: "Manifestation, Power, Skill", desc: "Transforming vision into reality using pure willpower and focused intention."},
-    {filename: "1792803197256.jpg", name: "II: The High Priestess", keywords: "Intuition, Mysteries, Subconscious", desc: "Accessing deep inner wisdom and quiet knowledge hidden behind the veil."},
-    {filename: "1792803202564.jpg", name: "III: The Empress", keywords: "Abundance, Nurturing, Creation", desc: "Lush growth, creative fertility, and grounding organic harmony."},
-    {filename: "1792803209642.jpg", name: "IV: The Emperor", keywords: "Structure, Authority, Control", desc: "Establishing order, solid foundations, and strategic leadership amidst chaos."},
-    {filename: "1792803221675.jpg", name: "V: The Hierophant", keywords: "Tradition, Guidance, Beliefs", desc: "Seeking conventional wisdom, formal alignment, and institutional knowledge."},
-    {filename: "1792803229181.jpg", name: "VI: The Lovers", keywords: "Union, Harmony, Choices", desc: "Deep personal alignment, key choices, and emotional union."},
-    {filename: "1792803250341.jpg", name: "XI: Justice", keywords: "Fairness, Truth, Balance", desc: "Evaluating cause and effect, standing firm in complete truth and equilibrium."},
-    {filename: "1792803258524.jpg", name: "XVII: The Star", keywords: "Hope, Faith, Renewal", desc: "A bright guiding light offering peace, inspiration, and cosmic direction."}
+    {filename: "660.jpg", name: "0: The Fool", keywords: "Beginnings, Spontaneity, Leap of Faith", desc: "Taking a surreal leap into the unknown, trusting the unfolding journey."},
+    {filename: "645.jpg", name: "I: The Magician", keywords: "Manifestation, Power, Skill", desc: "Transforming vision into reality using pure willpower and focused intention."},
+    {filename: "659.jpg", name: "II: The High Priestess", keywords: "Intuition, Mysteries, Subconscious", desc: "Accessing deep inner wisdom and quiet knowledge hidden behind the veil."},
+    {filename: "647.jpg", name: "III: The Empress", keywords: "Abundance, Nurturing, Creation", desc: "Lush growth, creative fertility, and grounding organic harmony."},
+    {filename: "643.jpg", name: "IV: The Emperor", keywords: "Structure, Authority, Control", desc: "Establishing order, solid foundations, and strategic leadership amidst chaos."},
+    {filename: "648.jpg", name: "V: The Hierophant", keywords: "Tradition, Guidance, Beliefs", desc: "Seeking conventional wisdom, formal alignment, and institutional knowledge."},
+    {filename: "649.jpg", name: "VI: The Lovers", keywords: "Union, Harmony, Choices", desc: "Deep personal alignment, key choices, and emotional union."},
+    {filename: "640.jpg", name: "X: The Wheel of Fortune", keywords: "Cycles, Destiny, Turning Points", desc: "The constant turning of fortune, shifting epochs, and inevitable change."},
+    {filename: "650.jpg", name: "XI: Justice", keywords: "Fairness, Truth, Balance", desc: "Evaluating cause and effect, standing firm in complete truth and equilibrium."},
+    {filename: "653.jpg", name: "XII: The Hanged Man", keywords: "Surrender, New Perspective, Pause", desc: "Viewing the world from a suspended vantage point to gain enlightenment."},
+    {filename: "652.jpg", name: "XIII: Death", keywords: "Endings, Transformation, Transition", desc: "Sweeping away old structures to clear space for new rebirth."},
+    {filename: "651.jpg", name: "XIV: Temperance", keywords: "Balance, Moderation, Purpose", desc: "Alchemical blending of opposing forces to achieve inner equilibrium."},
+    {filename: "656.jpg", name: "XV: The Devil", keywords: "Attachment, Shadow Self, Restraint", desc: "Recognizing material illusions and breaking free from self-imposed chains."},
+    {filename: "654.jpg", name: "XVI: The Tower", keywords: "Awakening, Sudden Change, Revelation", desc: "Shattering false structures in an instant to reveal fundamental truth."},
+    {filename: "655.jpg", name: "XVII: The Star", keywords: "Hope, Faith, Renewal", desc: "A bright guiding light offering peace, inspiration, and cosmic direction."},
+    {filename: "658.jpg", name: "XVIII: The Moon", keywords: "Illusion, Intuition, Fears", desc: "Navigating uncertainties and subconscious shadows under the pale night."},
+    {filename: "644.jpg", name: "XXI: The World", "keywords": "Completion, Integration, Accomplishment", desc: "Reaching full wholeness, integration, and mastering the full journey."}
 ];
 
 const SPREAD_CONFIGS = {
@@ -255,11 +221,7 @@ function generateReading() {
     const config = SPREAD_CONFIGS[currentSpreadKey];
     const positions = config.positions;
     const shuffled = shuffleArray(TAROT_CARDS);
-    
-    const drawnCards = [];
-    for (let i = 0; i < positions.length; i++) {
-        drawnCards.push(shuffled[i % shuffled.length]);
-    }
+    const drawnCards = shuffled.slice(0, positions.length);
 
     const container = document.getElementById('cards-container');
     container.innerHTML = '';
@@ -267,20 +229,12 @@ function generateReading() {
     drawnCards.forEach((card, index) => {
         const box = document.createElement('div');
         box.className = 'card-box';
-        
         box.innerHTML = `
             <div class="card-position">${positions[index]}</div>
-            <div class="card-img-container">
-                <div class="fallback-art">
-                    <div style="font-size: 1.4rem; margin-bottom: 2px;">👁️</div>
-                    <div style="font-size: 0.65rem; font-weight: bold;">${card.name}</div>
-                </div>
-                <img src="./${card.filename}" alt="${card.name}" onerror="this.style.display='none';">
-            </div>
+            <img class="card-img" src="${card.filename}" alt="${card.name}" onerror="this.src='https://via.placeholder.com/120x180?text=Dal%C3%AD+Card'">
             <div class="card-info">
                 <div class="card-name">${card.name}</div>
                 <div class="card-keywords">${card.keywords}</div>
-                <div class="card-debug">${card.filename}</div>
             </div>
         `;
         container.appendChild(box);
