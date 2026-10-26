@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Surreal Mystic Tarot</title>
+    <title>Surreal Mystic Tarot — Salvador Dalí Edition</title>
     
     <!-- PWA / Mobile Native App Capabilities -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b0813">
-    <meta name="application-name" content="Surreal Tarot">
-    <meta name="apple-mobile-web-app-title" content="Surreal Tarot">
-
-    <!-- Embedded Web Manifest for Installation -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Surreal Mystic Tarot","short_name":"SurrealTarot","start_url":".","display":"standalone","background_color":"#0b0813","theme_color":"#0b0813","icons":[{"src":"https://picsum.photos/192","sizes":"192x192","type":"image/png"},{"src":"https://picsum.photos/512","sizes":"512x512","type":"image/png"}]}'>
 
     <style>
         :root {
@@ -40,7 +35,6 @@
             padding: 20px 16px 40px 16px;
             margin: 0;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         h1 { 
@@ -87,12 +81,7 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            transition: transform 0.1s ease;
             width: 100%;
-        }
-
-        button:active { 
-            transform: scale(0.96); 
         }
 
         .spread {
@@ -178,17 +167,17 @@
 
     <script>
         const deck = [
-            { name: "0. The Fool", image: "1792803353124.jpg", upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." },
+            { name: "0. The Fool", image: "fool.jpg", upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." },
             { name: "I. The Magician", image: "magician.jpg", upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." },
-            { name: "II. The High Priestess", image: "1792803345745.jpg", upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." },
-            { name: "III. The Empress", image: "1792803358973.jpg", upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." },
+            { name: "II. The High Priestess", image: "priestess.jpg", upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." },
+            { name: "III. The Empress", image: "empress.jpg", upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." },
             { name: "IV. The Emperor", image: "emperor.jpg", upright: "Authority, structure, stability, leadership, establishing solid foundations.", reversed: "Tyranny, excessive control, rigidity, lack of discipline." },
             { name: "V. The Hierophant", image: "hierophant.jpg", upright: "Spiritual wisdom, traditions, institutions, guidance, shared beliefs.", reversed: "Rebellion, breaking traditions, restriction, unorthodox methods." },
-            { name: "VI. The Lovers", image: "1792803250341.jpg", upright: "Divine union, choices aligned with core values, harmony, vulnerability.", reversed: "Disharmony, misalignment, bad choices, internal conflict." },
-            { name: "VII. The Chariot", image: "1792831873198.jpg", upright: "Control, willpower, success, action, determination moving forward.", reversed: "Lack of control, opposition, directionless momentum, aggression." },
-            { name: "VIII. Strength", image: "1792831978816.jpg", upright: "Courage, compassion, inner patience, gentle control over raw impulses.", reversed: "Self-doubt, raw emotion, weakness, lack of confidence." },
-            { name: "IX. The Hermit", image: "1792831793835.jpg", upright: "Soul-searching, introspection, solitude, inner guidance, awareness.", reversed: "Isolation, loneliness, withdrawal, lost on the path." },
-            { name: "X. The Wheel of Fortune", image: "1792831804194.jpg", upright: "Cycles, shifting epochs, destiny, turning points, good luck.", reversed: "Bad luck, resistance to change, breaking cycles, setbacks." },
+            { name: "VI. The Lovers", image: "lovers.jpg", upright: "Divine union, choices aligned with core values, harmony, vulnerability.", reversed: "Disharmony, misalignment, bad choices, internal conflict." },
+            { name: "VII. The Chariot", image: "chariot.jpg", upright: "Control, willpower, success, action, determination moving forward.", reversed: "Lack of control, opposition, directionless momentum, aggression." },
+            { name: "VIII. Strength", image: "strength.jpg", upright: "Courage, compassion, inner patience, gentle control over raw impulses.", reversed: "Self-doubt, raw emotion, weakness, lack of confidence." },
+            { name: "IX. The Hermit", image: "hermit.jpg", upright: "Soul-searching, introspection, solitude, inner guidance, awareness.", reversed: "Isolation, loneliness, withdrawal, lost on the path." },
+            { name: "X. The Wheel of Fortune", image: "wheel_of_fortune.jpg", upright: "Cycles, shifting epochs, destiny, turning points, good luck.", reversed: "Bad luck, resistance to change, breaking cycles, setbacks." },
             { name: "XI. Justice", image: "justice.jpg", upright: "Fairness, truth, cause and effect, law, accountability.", reversed: "Dishonesty, unfairness, lack of accountability, corruption." },
             { name: "XII. The Hanged Man", image: "hanged_man.jpg", upright: "Surrender, letting go, new perspectives, pausing in time.", reversed: "Stagnation, useless sacrifice, resistance to change, delay." },
             { name: "XIII. Death", image: "death.jpg", upright: "Endings, transformation, transition, letting go of old attachments.", reversed: "Fear of change, holding on to decay, delayed transformation." },
@@ -196,7 +185,7 @@
             { name: "XV. The Devil", image: "devil.jpg", upright: "Shadow self, attachment, restriction, addiction, material illusion.", reversed: "Freedom, breaking chains, overcoming addiction, reclaiming control." },
             { name: "XVI. The Tower", image: "tower.jpg", upright: "Sudden upheaval, revelation, breakdown of false structures, awakening.", reversed: "Avoiding disaster, fear of suffering, delayed necessary breakdown." },
             { name: "XVII. The Star", image: "star.jpg", upright: "Hope, faith, renewal, inspiration, spiritual guidance, clarity.", reversed: "Despair, lack of faith, hopelessness, disconnection, pessimism." },
-            { name: "XVIII. The Moon", image: "1792803338560.jpg", upright: "Illusion, fear, subconscious mind, intuition, navigating the dark.", reversed: "Release of fear, unveiling secrets, overcoming anxiety, clarity." },
+            { name: "XVIII. The Moon", image: "moon.jpg", upright: "Illusion, fear, subconscious mind, intuition, navigating the dark.", reversed: "Release of fear, unveiling secrets, overcoming anxiety, clarity." },
             { name: "XIX. The Sun", image: "sun.jpg", upright: "Joy, success, celebration, vitality, warmth, unbridled optimism.", reversed: "Temporary depression, overly optimistic views, dimmed light." },
             { name: "XX. Judgement", image: "judgement.jpg", upright: "Rebirth, inner calling, absolution, reflection, awakening.", reversed: "Self-doubt, harsh self-judgment, ignoring the call." },
             { name: "XXI. The World", image: "world.jpg", upright: "Completion, accomplishment, travel, fulfillment, a major life cycle ending.", reversed: "Lack of closure, incomplete goals, delays in success." }
