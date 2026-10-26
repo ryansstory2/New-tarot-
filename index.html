@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Surreal Mystic Tarot — Salvador Dalí Edition</title>
+    <title>Surreal Mystic Tarot</title>
     
     <!-- PWA / Mobile Native App Capabilities -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b0813">
+    <meta name="application-name" content="Surreal Tarot">
+    <meta name="apple-mobile-web-app-title" content="Surreal Tarot">
+
+    <!-- Embedded Web Manifest for Installation -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Surreal Mystic Tarot","short_name":"SurrealTarot","start_url":".","display":"standalone","background_color":"#0b0813","theme_color":"#0b0813","icons":[{"src":"https://picsum.photos/192","sizes":"192x192","type":"image/png"},{"src":"https://picsum.photos/512","sizes":"512x512","type":"image/png"}]}'>
 
     <style>
         :root {
@@ -35,6 +40,8 @@
             padding: 20px 16px 40px 16px;
             margin: 0;
             min-height: 100vh;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 10%, rgba(74, 59, 117, 0.2), transparent 70%);
         }
 
         h1 { 
@@ -49,6 +56,7 @@
             color: var(--sub-purple); 
             font-size: 0.85rem; 
             margin-bottom: 20px; 
+            font-style: italic;
         }
 
         .controls {
@@ -81,13 +89,18 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            transition: transform 0.1s ease;
             width: 100%;
+        }
+
+        button:active { 
+            transform: scale(0.96); 
         }
 
         .spread {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
             max-width: 400px;
             margin: 0 auto;
         }
@@ -98,7 +111,7 @@
             border-radius: 16px;
             padding: 18px;
             text-align: center;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
 
         .card .pos { 
@@ -107,10 +120,11 @@
             text-transform: uppercase; 
             letter-spacing: 1.5px; 
             font-weight: bold;
+            margin-bottom: 2px;
         }
 
         .card h3 { 
-            margin: 4px 0; 
+            margin: 2px 0 4px 0; 
             color: var(--accent-gold); 
             font-size: 1.25rem;
         }
@@ -121,19 +135,25 @@
             margin-bottom: 12px;
         }
 
-        .card img {
+        .card-art-container {
             width: 100%;
             max-width: 320px;
-            height: auto;
+            margin: 0 auto 14px auto;
             border-radius: 10px;
-            margin: 5px 0 12px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            border: 1px solid rgba(243, 229, 171, 0.2);
-            transition: transform 0.4s ease;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.7);
+            border: 1px solid rgba(243, 229, 171, 0.25);
+            transition: transform 0.5s ease;
         }
 
-        .card img.reversed {
+        .card-art-container.reversed {
             transform: rotate(180deg);
+        }
+
+        .card-art-container img, .card-art-container svg {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         .card p { 
@@ -166,29 +186,64 @@
     <div id="results" class="spread"></div>
 
     <script>
+        // Inline SVG generator for complete standalone deck rendering
+        function makeCardSvg(title, symbol, primaryColor = '#f3e5ab') {
+            return `<svg viewBox="0 0 320 480" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="100%">
+                        <stop offset="0%" stop-color="#120c24"/>
+                        <stop offset="100%" stop-color="#3b1d4a"/>
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <rect width="320" height="480" rx="10" fill="url(#sky)"/>
+                <path d="M 0 320 Q 80 290 160 320 T 320 310 L 320 480 L 0 480 Z" fill="#2a162d"/>
+                <path d="M 0 360 Q 120 390 240 350 T 320 370 L 320 480 L 0 480 Z" fill="#090510" opacity="0.6"/>
+                <ellipse cx="160" cy="90" rx="45" ry="22" fill="none" stroke="${primaryColor}" stroke-width="1.5" opacity="0.4"/>
+                <circle cx="160" cy="90" r="12" fill="${primaryColor}" opacity="0.7" filter="url(#glow)"/>
+                <path d="M 50 440 L 80 200 M 80 200 L 110 440" stroke="${primaryColor}" stroke-width="1.5" opacity="0.3"/>
+                <path d="M 270 440 L 240 190 M 240 190 L 210 440" stroke="${primaryColor}" stroke-width="1.5" opacity="0.3"/>
+                <g filter="url(#glow)">
+                    <path d="M 110 180 C 110 150, 210 150, 210 180 C 210 220, 180 240, 160 250 C 140 240, 110 220, 110 180 Z" fill="rgba(255,255,255,0.08)" stroke="${primaryColor}" stroke-width="2"/>
+                    <line x1="160" y1="180" x2="140" y2="195" stroke="${primaryColor}" stroke-width="2"/>
+                    <line x1="160" y1="180" x2="175" y2="210" stroke="${primaryColor}" stroke-width="1.5"/>
+                    <circle cx="160" cy="180" r="3" fill="${primaryColor}"/>
+                </g>
+                <text x="160" y="300" font-size="38" text-anchor="middle" fill="${primaryColor}" filter="url(#glow)">${symbol}</text>
+                <rect x="20" y="415" width="280" height="42" rx="8" fill="#110a1f" stroke="${primaryColor}" stroke-width="1" opacity="0.9"/>
+                <text x="160" y="441" font-size="14" font-weight="bold" fill="${primaryColor}" text-anchor="middle" letter-spacing="1">${title.toUpperCase()}</text>
+            </svg>`;
+        }
+
         const deck = [
-            { name: "0. The Fool", image: "fool.jpg", upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." },
-            { name: "I. The Magician", image: "magician.jpg", upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." },
-            { name: "II. The High Priestess", image: "priestess.jpg", upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." },
-            { name: "III. The Empress", image: "empress.jpg", upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." },
-            { name: "IV. The Emperor", image: "emperor.jpg", upright: "Authority, structure, stability, leadership, establishing solid foundations.", reversed: "Tyranny, excessive control, rigidity, lack of discipline." },
-            { name: "V. The Hierophant", image: "hierophant.jpg", upright: "Spiritual wisdom, traditions, institutions, guidance, shared beliefs.", reversed: "Rebellion, breaking traditions, restriction, unorthodox methods." },
-            { name: "VI. The Lovers", image: "lovers.jpg", upright: "Divine union, choices aligned with core values, harmony, vulnerability.", reversed: "Disharmony, misalignment, bad choices, internal conflict." },
-            { name: "VII. The Chariot", image: "chariot.jpg", upright: "Control, willpower, success, action, determination moving forward.", reversed: "Lack of control, opposition, directionless momentum, aggression." },
-            { name: "VIII. Strength", image: "strength.jpg", upright: "Courage, compassion, inner patience, gentle control over raw impulses.", reversed: "Self-doubt, raw emotion, weakness, lack of confidence." },
-            { name: "IX. The Hermit", image: "hermit.jpg", upright: "Soul-searching, introspection, solitude, inner guidance, awareness.", reversed: "Isolation, loneliness, withdrawal, lost on the path." },
-            { name: "X. The Wheel of Fortune", image: "wheel_of_fortune.jpg", upright: "Cycles, shifting epochs, destiny, turning points, good luck.", reversed: "Bad luck, resistance to change, breaking cycles, setbacks." },
-            { name: "XI. Justice", image: "justice.jpg", upright: "Fairness, truth, cause and effect, law, accountability.", reversed: "Dishonesty, unfairness, lack of accountability, corruption." },
-            { name: "XII. The Hanged Man", image: "hanged_man.jpg", upright: "Surrender, letting go, new perspectives, pausing in time.", reversed: "Stagnation, useless sacrifice, resistance to change, delay." },
-            { name: "XIII. Death", image: "death.jpg", upright: "Endings, transformation, transition, letting go of old attachments.", reversed: "Fear of change, holding on to decay, delayed transformation." },
-            { name: "XIV. Temperance", image: "temperance.jpg", upright: "Balance, moderation, patience, alchemy, finding inner peace.", reversed: "Imbalance, excess, lack of patience, conflicting energies." },
-            { name: "XV. The Devil", image: "devil.jpg", upright: "Shadow self, attachment, restriction, addiction, material illusion.", reversed: "Freedom, breaking chains, overcoming addiction, reclaiming control." },
-            { name: "XVI. The Tower", image: "tower.jpg", upright: "Sudden upheaval, revelation, breakdown of false structures, awakening.", reversed: "Avoiding disaster, fear of suffering, delayed necessary breakdown." },
-            { name: "XVII. The Star", image: "star.jpg", upright: "Hope, faith, renewal, inspiration, spiritual guidance, clarity.", reversed: "Despair, lack of faith, hopelessness, disconnection, pessimism." },
-            { name: "XVIII. The Moon", image: "moon.jpg", upright: "Illusion, fear, subconscious mind, intuition, navigating the dark.", reversed: "Release of fear, unveiling secrets, overcoming anxiety, clarity." },
-            { name: "XIX. The Sun", image: "sun.jpg", upright: "Joy, success, celebration, vitality, warmth, unbridled optimism.", reversed: "Temporary depression, overly optimistic views, dimmed light." },
-            { name: "XX. Judgement", image: "judgement.jpg", upright: "Rebirth, inner calling, absolution, reflection, awakening.", reversed: "Self-doubt, harsh self-judgment, ignoring the call." },
-            { name: "XXI. The World", image: "world.jpg", upright: "Completion, accomplishment, travel, fulfillment, a major life cycle ending.", reversed: "Lack of closure, incomplete goals, delays in success." }
+            { name: "0. The Fool", symbol: "🃡", file: "fool.jpg", upright: "New beginnings, innocence, spontaneity, boundless potential in the dreamscape.", reversed: "Holding back, recklessness, foolish risk-taking, straying off the path." },
+            { name: "I. The Magician", symbol: "🪄", file: "magician.jpg", upright: "Manifestation, willpower, resourcefulness, bending reality to your intent.", reversed: "Manipulation, poor planning, illusions, untapped or wasted talents." },
+            { name: "II. The High Priestess", symbol: "🌙", file: "priestess.jpg", upright: "Intuition, sacred mystery, the subconscious realm, inner knowing.", reversed: "Hidden secrets, blocked intuition, superficial judgment, confusion." },
+            { name: "III. The Empress", symbol: "👑", file: "empress.jpg", upright: "Abundance, nurturing nature, fertile creativity, beauty, and empathy.", reversed: "Creative blocks, dependence on others, emptiness, neglected self-care." },
+            { name: "IV. The Emperor", symbol: "🏛️", file: "emperor.jpg", upright: "Authority, structure, stability, leadership, establishing solid foundations.", reversed: "Tyranny, excessive control, rigidity, lack of discipline." },
+            { name: "V. The Hierophant", symbol: "🔑", file: "hierophant.jpg", upright: "Spiritual wisdom, traditions, institutions, guidance, shared beliefs.", reversed: "Rebellion, breaking traditions, restriction, unorthodox methods." },
+            { name: "VI. The Lovers", symbol: "🫀", file: "lovers.jpg", upright: "Divine union, choices aligned with core values, harmony, vulnerability.", reversed: "Disharmony, misalignment, bad choices, internal conflict." },
+            { name: "VII. The Chariot", symbol: "⚔️", file: "chariot.jpg", upright: "Control, willpower, success, action, determination moving forward.", reversed: "Lack of control, opposition, directionless momentum, aggression." },
+            { name: "VIII. Strength", symbol: "🦁", file: "strength.jpg", upright: "Courage, compassion, inner patience, gentle control over raw impulses.", reversed: "Self-doubt, raw emotion, weakness, lack of confidence." },
+            { name: "IX. The Hermit", symbol: "🕯️", file: "hermit.jpg", upright: "Soul-searching, introspection, solitude, inner guidance, awareness.", reversed: "Isolation, loneliness, withdrawal, lost on the path." },
+            { name: "X. The Wheel of Fortune", symbol: "🎡", file: "wheel_of_fortune.jpg", upright: "Cycles, shifting epochs, destiny, turning points, good luck.", reversed: "Bad luck, resistance to change, breaking cycles, setbacks." },
+            { name: "XI. Justice", symbol: "⚖️", file: "justice.jpg", upright: "Fairness, truth, cause and effect, law, accountability.", reversed: "Dishonesty, unfairness, lack of accountability, corruption." },
+            { name: "XII. The Hanged Man", symbol: "⏳", file: "hanged_man.jpg", upright: "Surrender, letting go, new perspectives, pausing in time.", reversed: "Stagnation, useless sacrifice, resistance to change, delay." },
+            { name: "XIII. Death", symbol: "💀", file: "death.jpg", upright: "Endings, transformation, transition, letting go of old attachments.", reversed: "Fear of change, holding on to decay, delayed transformation." },
+            { name: "XIV. Temperance", symbol: "🏺", file: "temperance.jpg", upright: "Balance, moderation, patience, alchemy, finding inner peace.", reversed: "Imbalance, excess, lack of patience, conflicting energies." },
+            { name: "XV. The Devil", symbol: "⛓️", file: "devil.jpg", upright: "Shadow self, attachment, restriction, addiction, material illusion.", reversed: "Freedom, breaking chains, overcoming addiction, reclaiming control." },
+            { name: "XVI. The Tower", symbol: "⚡", file: "tower.jpg", upright: "Sudden upheaval, revelation, breakdown of false structures, awakening.", reversed: "Avoiding disaster, fear of suffering, delayed necessary breakdown." },
+            { name: "XVII. The Star", symbol: "👁️", file: "star.jpg", upright: "Hope, faith, renewal, inspiration, spiritual guidance, clarity.", reversed: "Despair, lack of faith, hopelessness, disconnection, pessimism." },
+            { name: "XVIII. The Moon", symbol: "🐺", file: "moon.jpg", upright: "Illusion, fear, subconscious mind, intuition, navigating the dark.", reversed: "Release of fear, unveiling secrets, overcoming anxiety, clarity." },
+            { name: "XIX. The Sun", symbol: "☀️", file: "sun.jpg", upright: "Joy, success, celebration, vitality, warmth, unbridled optimism.", reversed: "Temporary depression, overly optimistic views, dimmed light." },
+            { name: "XX. Judgement", symbol: "📯", file: "judgement.jpg", upright: "Rebirth, inner calling, absolution, reflection, awakening.", reversed: "Self-doubt, harsh self-judgment, ignoring the call." },
+            { name: "XXI. The World", symbol: "🌐", file: "world.jpg", upright: "Completion, accomplishment, travel, fulfillment, a major life cycle ending.", reversed: "Lack of closure, incomplete goals, delays in success." }
         ];
 
         const spreadLayouts = {
@@ -217,11 +272,17 @@
 
                 const cardDiv = document.createElement("div");
                 cardDiv.className = "card";
+                
+                // Fallback mechanism: attempts to load local file first, then falls back to inline SVG
+                const svgMarkup = makeCardSvg(card.name, card.symbol);
+
                 cardDiv.innerHTML = `
                     <div class="pos">${positions[index]}</div>
                     <h3>${card.name}</h3>
                     <div class="orient">${orientation}</div>
-                    <img src="${card.image}" alt="${card.name}" class="${imgClass}" onerror="this.onerror=null; this.src='https://picsum.photos/320/200?grayscale';">
+                    <div class="card-art-container ${imgClass}">
+                        <img src="${card.file}" alt="${card.name}" onerror="this.onerror=null; this.parentElement.innerHTML=\`${svgMarkup}\`;">
+                    </div>
                     <p>${meaning}</p>
                 `;
                 container.appendChild(cardDiv);
