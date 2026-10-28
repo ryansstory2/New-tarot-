@@ -1,158 +1,412 @@
-import sys
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.image import Image
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.popup import Popup
-from kivy.core.window import Window
-import random
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surrealist Tarot</title>
+    <!-- Google GenAI SDK for AI Reading Synthesis -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.run/@google/genai"
+        }
+      }
+    </script>
+    <style>
+        :root {
+            --bg-color: #120907;
+            --panel-bg: #1c0e0b;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #8c7323;
+            --crimson: #5c0606;
+            --crimson-bright: #8a1c1c;
+            --text-main: #e6dcce;
+            --text-muted: #ab9c8a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cinzel', 'Times New Roman', serif, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; background-image: radial-gradient(circle at 50% 30%, #24120e 0%, #120907 80%); }
+        header { text-align: center; padding: 20px; border-bottom: 1px solid var(--gold-dark); background: rgba(18, 9, 7, 0.95); position: sticky; top: 0; z-index: 100; }
+        header h1 { color: var(--gold); font-size: 1.8rem; letter-spacing: 3px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        nav { display: flex; justify-content: center; gap: 15px; padding: 12px; background: #180c0a; border-bottom: 1px solid rgba(212, 175, 55, 0.2); flex-wrap: wrap; }
+        .nav-btn { background: transparent; border: 1px solid var(--gold-dark); color: var(--text-muted); padding: 8px 16px; cursor: pointer; font-size: 0.9rem; letter-spacing: 1px; transition: all 0.3s ease; border-radius: 2px; }
+        .nav-btn.active, .nav-btn:hover { background: var(--gold-dark); color: var(--gold-light); border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        main { flex: 1; padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .spread-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .spread-btn { background: var(--panel-bg); border: 1px solid var(--gold-dark); color: var(--text-main); padding: 10px 20px; cursor: pointer; transition: all 0.3s; }
+        .spread-btn.selected { background: var(--crimson); border-color: var(--gold); color: var(--gold-light); }
+        .deck-area { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 350px; position: relative; }
+        .card-stack { width: 140px; height: 220px; background: linear-gradient(135deg, #3d1c13, #1c0e0b); border: 2px solid var(--gold); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.7), inset 0 0 15px rgba(212,175,55,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; padding: 10px; transition: transform 0.3s, box-shadow 0.3s; position: relative; }
+        .card-stack:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(212,175,55,0.3); }
+        .card-stack::before { content: "T"; font-size: 3rem; color: var(--gold-dark); opacity: 0.3; font-family: serif; }
+        .instruction { margin-top: 15px; color: var(--text-muted); font-style: italic; font-size: 0.95rem; }
+        .spread-board { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .card-slot { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .slot-label { font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 120px; }
+        .tarot-card { width: 110px; height: 180px; perspective: 1000px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .tarot-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; border: 1px solid var(--gold-dark); display: flex; flex-direction: column; justify-content: space-between; padding: 8px; }
+        .card-back { background: linear-gradient(135deg, #2b130e, #0f0705); border-color: var(--gold); }
+        .card-back::after { content: "T"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; color: var(--gold-dark); opacity: 0.4; }
+        .card-front { background: #1c0e0b; color: var(--text-main); transform: rotateY(180deg); border-color: var(--gold); text-align: center; justify-content: center; }
+        .card-front.reversed { transform: rotateY(180deg) rotate(180deg); }
+        .card-title { font-size: 0.85rem; color: var(--gold-light); font-weight: bold; }
+        .card-symbol { font-size: 1.8rem; margin: 5px 0; }
+        .encyclopedia-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-input, .filter-select { background: var(--panel-bg); border: 1px solid var(--gold-dark); color: var(--text-main); padding: 10px; border-radius: 4px; font-size: 0.95rem; }
+        .search-input { flex: 1; min-width: 200px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .card-thumb { background: var(--panel-bg); border: 1px solid var(--gold-dark); border-radius: 6px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .card-thumb:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212,175,55,0.15); }
+        .card-thumb h4 { color: var(--gold-light); font-size: 0.95rem; margin-bottom: 5px; }
+        .card-thumb p { color: var(--text-muted); font-size: 0.8rem; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal.open { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--panel-bg); border: 2px solid var(--gold); padding: 30px; max-width: 600px; width: 90%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); position: relative; max-height: 85vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--gold); font-size: 1.4rem; cursor: pointer; }
+        .modal-title { color: var(--gold); font-size: 1.4rem; margin-bottom: 5px; }
+        .modal-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; font-style: italic; }
+        .modal-body p { margin-bottom: 12px; line-height: 1.5; font-size: 0.95rem; }
+        .ai-synthesis-box { margin-top: 15px; padding: 15px; background: rgba(92, 6, 6, 0.3); border: 1px solid var(--gold-dark); border-radius: 6px; }
+        .ai-synthesis-box h4 { color: var(--gold); margin-bottom: 8px; font-size: 1rem; }
+        .journal-actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .action-btn { background: var(--crimson); border: 1px solid var(--gold-dark); color: var(--gold-light); padding: 10px 18px; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.9rem; }
+        .action-btn:hover { background: var(--crimson-bright); }
+        .journal-list { display: flex; flex-direction: column; gap: 15px; }
+        .journal-item { background: var(--panel-bg); border: 1px solid var(--gold-dark); padding: 15px; border-radius: 6px; }
+        .journal-date { color: var(--gold); font-size: 0.85rem; margin-bottom: 5px; }
+        .journal-spread { font-weight: bold; font-size: 1.05rem; margin-bottom: 8px; }
+        .journal-cards { color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <header><h1>SURREALIST TAROT</h1></header>
+    <nav>
+        <button class="nav-btn active" onclick="switchView('reading', event)">Readings</button>
+        <button class="nav-btn" onclick="switchView('encyclopedia', event)">Card Encyclopedia</button>
+        <button class="nav-btn" onclick="switchView('journal', event)">Reading Journal</button>
+    </nav>
+    <main>
+        <section id="reading-view" class="view-section active">
+            <div class="spread-selector">
+                <button class="spread-btn selected" onclick="setSpread('daily', event)">Daily Draw (1 Card)</button>
+                <button class="spread-btn" onclick="setSpread('past_present_future', event)">Past, Present, Future (3 Cards)</button>
+                <button class="spread-btn" onclick="setSpread('celtic_cross', event)">Celtic Cross (10 Cards)</button>
+            </div>
+            <div class="deck-area" id="deck-area">
+                <div class="card-stack" onclick="performDraw()"><span>Draw Cards</span></div>
+                <div class="instruction">Click the deck to shuffle and draw for your spread</div>
+            </div>
+            <div class="spread-board" id="spread-board"></div>
+            <div id="reading-actions" style="text-align:center; margin-top:30px; display:none;">
+                <button class="action-btn" onclick="triggerAISynthesis()" style="font-size:1rem; padding: 12px 24px;">✨ Synthesize Reading with AI</button>
+            </div>
+        </section>
+        <section id="encyclopedia-view" class="view-section">
+            <div class="encyclopedia-controls">
+                <input type="text" class="search-input" id="search-input" placeholder="Search cards by name or keyword..." oninput="filterEncyclopedia()">
+                <select class="filter-select" id="filter-select" onchange="filterEncyclopedia()">
+                    <option value="all">All Cards</option>
+                    <option value="major">Major Arcana</option>
+                    <option value="wands">Suit of Wands</option>
+                    <option value="cups">Suit of Cups</option>
+                    <option value="swords">Suit of Swords</option>
+                    <option value="pentacles">Suit of Pentacles</option>
+                </select>
+            </div>
+            <div class="cards-grid" id="cards-grid"></div>
+        </section>
+        <section id="journal-view" class="view-section">
+            <div class="journal-list" id="journal-list"></div>
+        </section>
+    </main>
 
-# Salvador Dalí inspired surrealist tarot deck sample
-TAROT_DECK = [
-    {
-        "name": "The Fool",
-        "keywords": "New Beginnings, Innocence, Spontaneity",
-        "description": "Stepping off the edge of time into surreal potential. Trust the journey."
-    },
-    {
-        "name": "The Magician",
-        "keywords": "Manifestation, Resourcefulness, Power",
-        "description": "Blending fluid reality and cosmic forces to shape destiny."
-    },
-    {
-        "name": "The High Priestess",
-        "keywords": "Intuition, Sacred Knowledge, Mystery",
-        "description": "Veiled wisdom flowing through dual reflections of intuition."
-    },
-    {
-        "name": "The Empress",
-        "keywords": "Femininity, Beauty, Nature, Abundance",
-        "description": "Creation melting into organic tapestry and abundance."
-    },
-    {
-        "name": "The Emperor",
-        "keywords": "Authority, Structure, Control",
-        "description": "Architect of time standing firm within fluid landscapes."
-    },
-    {
-        "name": "The Lovers",
-        "keywords": "Love, Harmony, Relationships, Choices",
-        "description": "Dual reflections mirroring connection and divine choice."
-    },
-    {
-        "name": "The Wheel of Fortune",
-        "keywords": "Good Luck, Karma, Life Cycles, Destiny",
-        "description": "The cosmic wheel spins endlessly through melting time."
-    },
-    {
-        "name": "The Sun",
-        "keywords": "Joy, Success, Celebration, Positivity",
-        "description": "Radiant illumination bringing clarity to surreal shadows."
-    },
-    {
-        "name": "The World",
-        "keywords": "Completion, Integration, Accomplishment, Travel",
-        "description": "Harmonious completion of the journey through dimensions."
-    }
-]
+    <!-- Modal for Card Details & AI Synthesis -->
+    <div class="modal" id="card-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <div class="modal-title" id="modal-card-title">Card Name</div>
+            <div class="modal-subtitle" id="modal-card-keywords">Keywords</div>
+            <div class="modal-body">
+                <p><strong>Upright:</strong> <span id="modal-card-upright"></span></p>
+                <p><strong>Reversed:</strong> <span id="modal-card-reversed"></span></p>
+                <p><strong>Surrealist Lore:</strong> <span id="modal-card-lore"></span></p>
+                <div class="ai-synthesis-box" id="modal-ai-box" style="display:none;">
+                    <h4>✨ Surrealist AI Synthesis</h4>
+                    <p id="modal-ai-text">Synthesizing cosmic reading...</p>
+                </div>
+            </div>
+            <div class="journal-actions" id="modal-actions">
+                <button class="action-btn" id="modal-save-btn" onclick="saveCurrentReading()">Save Reading to Journal</button>
+            </div>
+        </div>
+    </div>
 
-class TarotApp(App):
-    def build(self):
-        self.title = "Surrealist Tarot"
-        
-        # Main background container
-        root_layout = FloatLayout()
-        
-        # Background color layout
-        main_box = BoxLayout(orientation='vertical', padding=15, spacing=15)
-        
-        # Header title
-        header = Label(
-            text="[b]SURREALIST TAROT[/b]",
-            markup=True,
-            font_size='24sp',
-            size_hint_y=0.1,
-            color=(0.95, 0.85, 0.5, 1)
-        )
-        main_box.add_widget(header)
+    <script type="module">
+        import { GoogleGenAI } from "@google/genai";
+        // Initialize Gemini client (API key can be supplied via environment or config)
+        const ai = new GoogleGenAI();
+        window.aiClient = ai;
+    </script>
 
-        # Card Display Area (Card Back Image)
-        self.card_image = Image(
-            source='card_back.png',  # Use your exported card back asset
-            allow_stretch=True,
-            keep_ratio=True,
-            size_hint_y=0.6
-        )
-        main_box.add_widget(self.card_image)
+    <script>
+        const suits = [
+            { id: 'wands', name: 'Wands', symbol: '🔥' },
+            { id: 'cups', name: 'Cups', symbol: '🍷' },
+            { id: 'swords', name: 'Swords', symbol: '⚔️' },
+            { id: 'pentacles', name: 'Pentacles', symbol: '🪙' }
+        ];
+        const rankNames = [
+            { name: 'Ace', val: 1 }, { name: 'Two', val: 2 }, { name: 'Three', val: 3 },
+            { name: 'Four', val: 4 }, { name: 'Five', val: 5 }, { name: 'Six', val: 6 },
+            { name: 'Seven', val: 7 }, { name: 'Eight', val: 8 }, { name: 'Nine', val: 9 },
+            { name: 'Ten', val: 10 }, { name: 'Page', val: 11 }, { name: 'Knight', val: 12 },
+            { name: 'Queen', val: 13 }, { name: 'King', val: 14 }
+        ];
+        const majorArcana = [
+            { name: '0. The Fool', symbol: '🃏', keywords: 'New Beginnings, Spontaneity, Leap of Faith', upright: 'Embarking on a surreal journey into the unknown with absolute trust.', reversed: 'Recklessness, hesitation, risk without reward.', lore: 'Melting clocks and staircases folding into open cosmic skies.' },
+            { name: 'I. The Magician', symbol: '🪄', keywords: 'Manifestation, Willpower, Creation', upright: 'Channeling higher dimensional forces into physical reality.', reversed: 'Illusion, untapped potential, manipulation.', lore: 'Melting implements and golden geometry bridging earth and spirit.' },
+            { name: 'II. The High Priestess', symbol: '📜', keywords: 'Intuition, Mystery, Subconscious', upright: 'Unlocking inner hidden wisdom behind veil reflections.', reversed: 'Secrets withheld, blocked intuition, superficiality.', lore: 'Dual moonlit faces dripping tears of infinite awareness.' },
+            { name: 'III. The Empress', symbol: '👑', keywords: 'Abundance, Nature, Fertility', upright: 'Organic growth, nurturing creation, and sensual harmony.', reversed: 'Creative block, dependence, smothering care.', lore: 'Surreal flora merging seamlessly with cosmic constellations.' },
+            { name: 'IV. The Emperor', symbol: '🏛️', keywords: 'Authority, Structure, Stability', upright: 'Establishing firm boundaries and ordered foundations.', reversed: 'Tyranny, rigidity, loss of control.', lore: 'Stately columns standing firm amidst swirling temporal sands.' },
+            { name: 'V. The Hierophant', symbol: '🗝️', keywords: 'Tradition, Spiritual Wisdom, Guidance', upright: 'Seeking higher teachings and structured community values.', reversed: 'Rebellion, dogmatic restriction, unorthodox paths.', lore: 'Golden keys unlocking ancestral doors across fading time.' },
+            { name: 'VI. The Lovers', symbol: '💕', keywords: 'Harmony, Choices, Alignment', upright: 'Deep resonant connections and core values alignment.', reversed: 'Disharmony, misaligned priorities, inner conflict.', lore: 'Two swan reflections mirroring cosmic devotion.' },
+            { name: 'VII. The Chariot', symbol: '🛞', keywords: 'Determination, Willpower, Victory', upright: 'Steering opposing forces toward triumphant progress.', reversed: 'Loss of direction, aggression, scattered focus.', lore: 'Wheels of time turning forward across turbulent skies.' },
+            { name: 'VIII. Strength', symbol: '🦁', keywords: 'Courage, Compassion, Inner Power', upright: 'Taming inner chaos through gentle grace and resolve.', reversed: 'Self-doubt, raw impulse, fatigue.', lore: 'Silent endurance under the gaze of eternal celestial clocks.' },
+            { name: 'IX. The Hermit', symbol: '🏮', keywords: 'Soul-Searching, Introspection, Solitude', upright: 'Withdrawing inward to find personal truth and light.', reversed: 'Isolation, loneliness, withdrawal from reality.', lore: 'A solitary lantern piercing through deep cosmic shadows.' },
+            { name: 'X. Wheel of Fortune', symbol: '🎡', keywords: 'Cycles, Destiny, Turning Point', upright: 'Favorable shifts in destiny and accepting life cycles.', reversed: 'Bad luck, resistance to change, unwanted cycles.', lore: 'Zodiac dials and melting clocks spinning in perpetual motion.' },
+            { name: 'XI. Justice', symbol: '⚖️', keywords: 'Fairness, Truth, Cause and Effect', upright: 'Objective clarity, balance, and accountable actions.', reversed: 'Dishonesty, bias, lack of accountability.', lore: 'Scales balancing elements of truth across surreal plains.' },
+            { name: 'XII. The Hanged Man', symbol: '🙃', keywords: 'Surrender, New Perspective, Release', upright: 'Pausing to view reality from an entirely inverted angle.', reversed: 'Stalling, needless sacrifice, martyrdom.', lore: 'Suspended in time while fluid elements drift upward.' },
+            { name: 'XIII. Death', symbol: '🦋', keywords: 'Transformation, Endings, Rebirth', upright: 'Shedding the obsolete to make space for fresh evolution.', reversed: 'Fear of change, stagnation, holding onto the past.', lore: 'Skeletons of time collapsing into brilliant stellar nurseries.' },
+            { name: 'XIV. Temperance', symbol: '🏺', keywords: 'Balance, Moderation, Patience', upright: 'Harmonious blending of contrasting elements.', reversed: 'Imbalance, excess, clashing energies.', lore: 'Pristine fluids pouring between chalices of infinite calm.' },
+            { name: 'XV. The Devil', symbol: '🎭', keywords: 'Shadow Self, Attachment, Materialism', upright: 'Recognizing self-imposed chains and illusions of control.', reversed: 'Breaking free, reclaiming power, overcoming habits.', lore: 'Masks of illusion dripping gold onto shadowed desires.' },
+            { name: 'XVI. The Tower', symbol: '⚡', keywords: 'Sudden Change, Upheaval, Awakening', upright: 'Collapse of false structures leading to sudden truth.', reversed: 'Avoiding disaster, delayed inevitable change.', lore: 'Lightning shattering pillars of routine into starry dust.' },
+            { name: 'XVII. The Star', symbol: '🌟', keywords: 'Hope, Faith, Inspiration', upright: 'Renewed optimism, healing, and spiritual guidance.', reversed: 'Loss of faith, discouragement, pessimism.', lore: 'Starlight cascading over tranquil, reflective waters.' },
+            { name: 'XVIII. The Moon', symbol: '🌙', keywords: 'Illusion, Fear, Subconscious', upright: 'Navigating uncertainty, dreams, and hidden anxieties.', reversed: 'Uncovering deception, releasing fears, clarity.', lore: 'Crescents reflecting multiple surreal faces in the night.' },
+            { name: 'XIX. The Sun', symbol: '☀️', keywords: 'Joy, Vitality, Success', upright: 'Radiant warmth, celebration, and unclouded clarity.', reversed: 'Temporary sadness, overly optimistic expectations.', lore: 'Blazing golden warmth melting away all lingering shadows.' },
+            { name: 'XX. Judgement', symbol: '📯', keywords: 'Reawakening, Calling, Absolution', upright: 'Heeding a profound inner call and evaluating life path.', reversed: 'Self-doubt, harsh self-criticism, ignoring calls.', lore: 'Celestial horns sounding across dimensions of awakening.' },
+            { name: 'XXI. The World', symbol: '🌍', keywords: 'Completion, Wholeness, Accomplishment', upright: 'Fulfilling a major life cycle with profound integration.', reversed: 'Incomplete closure, delays, missing milestones.', lore: 'The ultimate dance of cosmic elements unified as one.' }
+        ];
 
-        # Interactive Shuffle & Draw Button
-        draw_button = Button(
-            text="Draw Card",
-            font_size='18sp',
-            size_hint=(0.8, 0.12),
-            pos_hint={'center_x': 0.5},
-            background_color=(0.7, 0.5, 0.2, 1),
-            color=(1, 1, 1, 1)
-        )
-        draw_button.bind(on_release=self.draw_card)
-        main_box.add_widget(draw_button)
+        let deck = [];
+        function buildFullDeck() {
+            let full = [];
+            majorArcana.forEach((card, idx) => {
+                full.push({ id: `maj_${idx}`, type: 'major', name: card.name, symbol: card.symbol, keywords: card.keywords, upright: card.upright, reversed: card.reversed, lore: card.lore });
+            });
+            suits.forEach(suit => {
+                rankNames.forEach(rank => {
+                    full.push({
+                        id: `${suit.id}_${rank.val}`,
+                        type: suit.id,
+                        name: `${rank.name} of ${suit.name}`,
+                        symbol: suit.symbol,
+                        keywords: `${rank.name} energy in ${suit.name}`,
+                        upright: `Positive flow of ${suit.name.toLowerCase()} through ${rank.name.toLowerCase()} manifestation.`,
+                        reversed: `Blocked or internal resistance within ${suit.name.toLowerCase()} themes.`,
+                        lore: `Surrealist manifestations of ${suit.name.toLowerCase()} reflecting temporal motion.`
+                    });
+                });
+            });
+            return full;
+        }
+        deck = buildFullDeck();
+        let currentSpread = 'daily';
+        let activeReading = [];
+        let journal = JSON.parse(localStorage.getItem('surreal_tarot_journal') || '[]');
+        let latestAISummary = "";
 
-        root_layout.add_widget(main_box)
-        return root_layout
+        function switchView(viewName, event) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            if (viewName === 'reading') {
+                document.getElementById('reading-view').classList.add('active');
+                event.target.classList.add('active');
+            } else if (viewName === 'encyclopedia') {
+                document.getElementById('encyclopedia-view').classList.add('active');
+                event.target.classList.add('active');
+                renderEncyclopedia(deck);
+            } else if (viewName === 'journal') {
+                document.getElementById('journal-view').classList.add('active');
+                event.target.classList.add('active');
+                renderJournal();
+            }
+        }
+        function setSpread(type, event) {
+            currentSpread = type;
+            document.querySelectorAll('.spread-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('spread-board').innerHTML = '';
+            document.getElementById('deck-area').style.display = 'flex';
+            document.getElementById('reading-actions').style.display = 'none';
+        }
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+        function performDraw() {
+            let count = 1;
+            let positions = ['Card'];
+            if (currentSpread === 'past_present_future') {
+                count = 3;
+                positions = ['Past', 'Present', 'Future'];
+            } else if (currentSpread === 'celtic_cross') {
+                count = 10;
+                positions = ['Present', 'Challenge', 'Past', 'Future', 'Above', 'Below', 'Advice', 'External', 'Hopes/Fears', 'Outcome'];
+            }
+            let shuffled = shuffle([...deck]);
+            activeReading = [];
+            latestAISummary = "";
+            let board = document.getElementById('spread-board');
+            board.innerHTML = '';
+            document.getElementById('deck-area').style.display = 'none';
 
-    def draw_card(self, instance):
-        # Pick a random card from the deck
-        card = random.choice(TAROT_DECK)
-        
-        # Create reading popup content
-        content = BoxLayout(orientation='vertical', padding=15, spacing=10)
-        
-        title_label = Label(
-            text=f"b[/b]",
-            markup=True,
-            font_size='22sp',
-            size_hint_y=0.2,
-            color=(0.95, 0.85, 0.5, 1)
-        )
-        keywords_label = Label(
-            text=f"i[/i]",
-            markup=True,
-            font_size='14sp',
-            size_hint_y=0.15,
-            color=(0.8, 0.8, 0.8, 1)
-        )
-        desc_label = Label(
-            text=card['description'],
-            font_size='16sp',
-            size_hint_y=0.45,
-            halign='center',
-            valign='middle'
-        )
-        desc_label.bind(size=desc_label.setter('text_size'))
+            for (let i = 0; i < count; i++) {
+                let cardData = shuffled[i];
+                let isReversed = Math.random() < 0.3;
+                activeReading.push({ ...cardData, position: positions[i], isReversed });
+                let slot = document.createElement('div');
+                slot.className = 'card-slot';
+                slot.innerHTML = `
+                    <div class="slot-label">${positions[i]}</div>
+                    <div class="tarot-card" onclick="flipCard(this, ${i})">
+                        <div class="card-inner">
+                            <div class="card-face card-back"></div>
+                            <div class="card-face card-front ${isReversed ? 'reversed' : ''}">
+                                <div class="card-title">${cardData.name}</div>
+                                <div class="card-symbol">${cardData.symbol}</div>
+                                <div style="font-size: 0.7rem; color: var(--text-muted);">${isReversed ? 'Reversed' : 'Upright'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                board.appendChild(slot);
+            }
+            document.getElementById('reading-actions').style.display = 'block';
+        }
+        function flipCard(element, index) {
+            element.classList.toggle('flipped');
+            setTimeout(() => { showCardModal(activeReading[index]); }, 400);
+        }
+        function showCardModal(card, showSaveButton = true) {
+            document.getElementById('modal-card-title').innerText = `${card.name} ${card.position ? '(' + card.position + ')' : ''}`;
+            document.getElementById('modal-card-keywords').innerText = card.keywords;
+            document.getElementById('modal-card-upright').innerText = card.upright;
+            document.getElementById('modal-card-reversed').innerText = card.reversed;
+            document.getElementById('modal-card-lore').innerText = card.lore;
+            
+            let aiBox = document.getElementById('modal-ai-box');
+            if (latestAISummary && showSaveButton) {
+                aiBox.style.display = 'block';
+                document.getElementById('modal-ai-text').innerText = latestAISummary;
+            } else {
+                aiBox.style.display = 'none';
+            }
 
-        close_btn = Button(
-            text="Close Reading",
-            size_hint=(0.6, 0.2),
-            pos_hint={'center_x': 0.5},
-            background_color=(0.5, 0.3, 0.1, 1)
-        )
+            document.getElementById('modal-actions').style.display = showSaveButton ? 'flex' : 'none';
+            document.getElementById('card-modal').classList.add('open');
+        }
+        function closeModal() { document.getElementById('card-modal').classList.remove('open'); }
 
-        content.add_widget(title_label)
-        content.add_widget(keywords_label)
-        content.add_widget(desc_label)
-        content.add_widget(close_btn)
+        async function triggerAISynthesis() {
+            if (!window.aiClient) {
+                alert('AI Client loading or unavailable.');
+                return;
+            }
+            document.getElementById('modal-card-title').innerText = "Synthesizing Reading...";
+            document.getElementById('modal-card-keywords').innerText = "Consulting Salvador Dalí surrealist dimensions...";
+            document.getElementById('modal-card-upright').innerText = "";
+            document.getElementById('modal-card-reversed').innerText = "";
+            document.getElementById('modal-card-lore').innerText = "";
+            
+            let aiBox = document.getElementById('modal-ai-box');
+            aiBox.style.display = 'block';
+            document.getElementById('modal-ai-text').innerText = "Weaving cosmic symbols and temporal motifs...";
+            document.getElementById('card-modal').classList.add('open');
 
-        popup = Popup(
-            title="Tarot Reading",
-            content=content,
-            size_hint=(0.85, 0.6),
-            auto_dismiss=False
-        )
-        close_btn.bind(on_release=popup.dismiss)
-        popup.open()
+            const cardDetails = activeReading.map(c => 
+                `- Position [${c.position}]: ${c.name} (${c.isReversed ? 'Reversed' : 'Upright'})`
+            ).join('\n');
 
-if __name__ == '__main__':
-    TarotApp().run()
+            const prompt = `You are a surrealist Tarot reader inspired by Salvador Dalí's artistic vision. 
+Synthesize a mystical, cohesive summary for a ${currentSpread} spread featuring these cards:
+
+${cardDetails}
+
+Provide a short, evocative interpretation (2 paragraphs) weaving the imagery and card positions together.`;
+
+            try {
+                const response = await window.aiClient.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: prompt,
+                    config: { temperature: 0.8 }
+                });
+                latestAISummary = response.text;
+                document.getElementById('modal-ai-text').innerText = latestAISummary;
+                document.getElementById('modal-card-title').innerText = "Surrealist Spread Synthesis";
+                document.getElementById('modal-card-keywords').innerText = `${activeReading.length} Cards Drawn`;
+            } catch (error) {
+                console.error("AI Error:", error);
+                latestAISummary = "The surrealist mists veil the reading summary at this moment. Trust your inner intuition.";
+                document.getElementById('modal-ai-text').innerText = latestAISummary;
+            }
+        }
+
+        function saveCurrentReading() {
+            if (activeReading.length === 0) return;
+            let record = {
+                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+                spread: currentSpread.replace('_', ' ').toUpperCase(),
+                cards: activeReading.map(c => `${c.position}: ${c.name} (${c.isReversed ? 'Rev' : 'Up'})`),
+                aiSummary: latestAISummary || null
+            };
+            journal.unshift(record);
+            localStorage.setItem('surreal_tarot_journal', JSON.stringify(journal));
+            alert('Reading successfully saved to your journal.');
+            closeModal();
+        }
+        function renderJournal() {
+            let list = document.getElementById('journal-list');
+            if (journal.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-muted); text-align:center;">No saved readings in your journal yet.</p>';
+                return;
+            }
+            list.innerHTML = journal.map(item => `
+                <div class="journal-item">
+                    <div class="journal-date">${item.date}</div>
+                    <div class="journal-spread">${item.spread}</div>
+                    <div class="journal-cards">${item.cards.join('<br>')}${item.aiSummary ? '<br><br><strong>AI Synthesis:</strong> ' + item.aiSummary : ''}</div>
+                </div>
+            `).join('');
+        }
+        function renderEncyclopedia(cardsToRender) {
+            let grid = document.getElementById('cards-grid');
+            grid.innerHTML = cardsToRender.map(card => `
+                <div class="card-thumb" onclick='showCardModal(${JSON.stringify(card)}, false)'>
+                    <h4>${card.symbol} ${card.name}</h4>
+                    <p>${card.keywords}</p>
+                </div>
+            `).join('');
+        }
+        function filterEncyclopedia() {
+            let query = document.getElementById('search-input').value.toLowerCase();
+            let filter = document.getElementById('filter-select').value;
+            let filtered = deck.filter(card => {
+                let matchesQuery = card.name.toLowerCase().includes(query) || card.keywords.toLowerCase().includes(query);
+                let matchesFilter = filter === 'all' || card.type === filter;
+                return matchesQuery && matchesFilter;
+            });
+            renderEncyclopedia(filtered);
+        }
+    </script>
+</body>
+</html>
